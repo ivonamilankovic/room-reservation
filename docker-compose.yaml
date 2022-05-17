@@ -1,0 +1,55 @@
+version: "3.2"
+
+services:
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        ENVIRONMENT_KEY: dev
+    restart: unless-stopped
+    links:
+      - mysql
+    networks:
+      - room-reservation
+    ports:
+      - 10001:80
+    volumes:
+      - ./:/var/www
+    environment:
+      APP_ENV: dev
+      DATABASE_URL: mysql://root:root@mysql:3306/room-reservation?serverVersion=5.7
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+    ports:
+      - 10002:80
+    links:
+      - mysql
+    networks:
+      - room-reservation
+  mysql:
+    image: mysql
+    platform: linux/amd64
+    command: mysqld --default-authentication-plugin=mysql_native_password
+    volumes:
+      - room-reservation-data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: room-reservation
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin12345
+    networks:
+      - room-reservation
+
+networks:
+  room-reservation:
+    driver: overlay
+    attachable: true
+
+volumes:
+  room-reservation-data:
