@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Room;
+use App\Form\RoomFormType;
 use App\Repository\RoomRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\UnicodeString;
@@ -13,36 +15,58 @@ class RoomController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstract
 {
 
     /**
-     * @Route("rooms/insert", name="app_insert_room")
+     * @Route("admin/rooms/insert", name="admin_insert_room")
      */
-    public function insert(EntityManagerInterface $entityManager):Response
+    public function insert(EntityManagerInterface $em, Request $request):Response
     {
-        $room = new Room();
 
-        $room->setName('hundred and x')
-            ->setSeatNumber(5)
-            ->setCity('Novi sad')
-            ->setStreet('ulica');
+        $form = $this->createForm(RoomFormType::class);
 
-        $entityManager->persist($room);
-        $entityManager->flush();
+        $form->handleRequest($request);
 
-        return new Response(sprintf('inserted with id #%d', $room->getId()));
+        if($form->isSubmitted() && $form->isValid()){
+            /** @var Room $room */
+            $room = $form->getData();
+
+            $em->persist($room);
+            $em->flush();
+
+            $this->addFlash('success','Nova sala je kreirana!');
+
+            $this->redirectToRoute('app_showall_room');
+
+        }
+
+        return $this->render('admin/room/new.html.twig',[
+            'form' => $form->createView(),
+        ]);
     }
 
     /**
-     * @Route("rooms/edit", name="app_edit_room")
+     * @Route("admin/rooms/edit/{id}", name="admin_edit_room")
      */
-    public function edit(EntityManagerInterface $entityManager):Response
+    public function edit(EntityManagerInterface $em, Request $request, Room $room):Response
     {
-        $room = new Room();
+        $form = $this->createForm(RoomFormType::class, $room);
 
+        $form->handleRequest($request);
 
+        if($form->isSubmitted() && $form->isValid()){
 
-        $entityManager->persist($room);
-        $entityManager->flush();
+            $em->persist($room);
+            $em->flush();
 
-        return new Response(sprintf('editing '));
+            $this->addFlash('success','Upesno ste izmenili podatke o sali!');
+
+            $this->redirectToRoute('admin_edit_room', [
+                'id' =>$room->getId()
+            ]);
+
+        }
+
+        return $this->render('admin/room/edit.html.twig',[
+            'form' => $form->createView(),
+        ]);
     }
 
     /**
