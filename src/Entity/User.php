@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -46,10 +48,7 @@ class User implements UserInterface
      */
     private $role;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $sector;
+
 
     /**
      * @ORM\OneToMany(targetEntity=Meeting::class, mappedBy="creator")
@@ -60,6 +59,12 @@ class User implements UserInterface
      * @ORM\ManyToMany(targetEntity=UserInMeeting::class, mappedBy="user")
      */
     private $userInMeetings;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Sector::class, inversedBy="users")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $sector;
 
     public function __construct()
     {
@@ -132,17 +137,6 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getSector(): ?string
-    {
-        return $this->sector;
-    }
-
-    public function setSector(string $sector): self
-    {
-        $this->sector = $sector;
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, Meeting>
@@ -252,5 +246,64 @@ class User implements UserInterface
     //{
     //   return null;
     //}
+
+    public function getSector(): ?Sector
+    {
+        return $this->sector;
+    }
+
+    public function setSector(?Sector $sector): self
+    {
+        $this->sector = $sector;
+
+        return $this;
+    }
+
+
+    /**
+     * @Assert\Callback
+     */
+    public function validate(ExecutionContextInterface $context, $payload){
+
+        if($this->getFirstName() === null){
+            $context->buildViolation("Unesite ime!")
+                ->atPath('first_name')
+                ->addViolation();
+        }
+
+        if($this->getLastName() === null){
+            $context->buildViolation("Unesite prezime!")
+                ->atPath('last_name')
+                ->addViolation();
+        }
+
+        if ($this->getEmail() === null){
+            $context->buildViolation("Unesite email!")
+                ->atPath('email')
+                ->addViolation();
+        }elseif (!filter_var($this->getEmail(), FILTER_VALIDATE_EMAIL)){
+            $context->buildViolation("Unesite validan format email-a!")
+                ->atPath('email')
+                ->addViolation();
+        }
+
+        if($this->getPassword() === null){
+            $context->buildViolation("Unesite lozinku!")
+                ->atPath('password')
+                ->addViolation();
+        }elseif(strlen($this->getPassword()) < 8){
+            $context->buildViolation("Lozinka mora imati barem 8 karaktera!")
+                ->atPath('password')
+                ->addViolation();
+        }
+
+        if($this->getSector() === null){
+            $context->buildViolation("Izaberite sektor!")
+                ->atPath('sector')
+                ->addViolation();
+        }
+
+    }
+
 
 }

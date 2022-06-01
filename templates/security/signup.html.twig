@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Sign up{% endblock %}
+
+{% block body %}
+
+    <div class="w-50 mx-auto mt-5">
+        <h2>Registracija</h2>
+        <br>
+
+    {{ form_start(signup_form) }}
+
+        {{ form_widget(signup_form) }}
+
+        <br>
+        <button type="submit" class="btn btn-primary" style="background-color: #F482D4; border: none">Registruj se</button>
+
+    {{ form_end(signup_form) }}
+    </div>
+
+{% endblock %}

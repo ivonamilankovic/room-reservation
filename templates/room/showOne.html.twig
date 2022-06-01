@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ room.name }}{% endblock %}
+
+{% block body %}
+
+        <div class="card w-75 mx-auto my-5 shadow-sm">
+            <div class="card-body m-5 px-5">
+                <h2 class="card-title text-center">{{ room.name }}</h2>
+                <br>
+                <div class="card-text">
+                    <div class="row">
+                        <div class="col-6 fw-bolder text-end">Kapacitet:</div>
+                        <div class="col-6">{{ room.seatNumber }} osoba</div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-6 fw-bolder text-end">Locirano u: </div>
+                        <div class="col-6">{{ room.city }}, {{ room.street }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+{% endblock %}

@@ -6,6 +6,7 @@ use App\Entity\Room;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -45,22 +46,26 @@ class RoomRepository extends ServiceEntityRepository
         }
     }
 
-    // /**
-    //  * @return Room[] Returns an array of Room objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    private function getQueryBuilder(QueryBuilder $qb = null) :QueryBuilder
     {
-        return $this->createQueryBuilder('r')
-            ->andWhere('r.exampleField = :val')
+        return $qb ?: $this->createQueryBuilder('r');
+    }
+
+     /**
+      * @return Room[] Returns an array of Room objects
+      */
+
+    public function findByCity($value)
+    {
+        return $this->getQueryBuilder()
+            ->andWhere('r.city = :val')
             ->setParameter('val', $value)
             ->orderBy('r.id', 'ASC')
-            ->setMaxResults(10)
             ->getQuery()
             ->getResult()
         ;
     }
-    */
+
 
     /*
     public function findOneBySomeField($value): ?Room

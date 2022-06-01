@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}Welcome!{% endblock %}</title>
@@ -15,29 +15,30 @@
             {{ encore_entry_script_tags('app') }}
         {% endblock %}
     </head>
-    <body>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <body style="background-color: #e8e8e8">
+        <nav class="navbar navbar-expand-lg navbar-dark sticky-top {{ app.session.flashBag.peek('success')|length > 0 ? '' : 'mb-4' }}" style="background-color: #3d8bfd;">
             <div class="container-fluid">
-                <a class="navbar-brand" href="{{ path('app_home') }}" style="padding-left: 15px;">Navbar</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+                <a class="navbar-brand" href="{{ path('app_home') }}" style="padding-left: 15px; font-weight: bold; font-size: 22pt;">info<span style="color: #F482D4">sala</span></a>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="{{ path('app_home') }}">Home</a>
+                            <a class="nav-link" aria-current="page" href="{{ path('app_home') }}">Početna</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Link</a>
+                            <a class="nav-link" href="{{ path('app_showall_room') }}">Sve sobe</a>
                         </li>
 
                     </ul>
-                    <a href="{{ path('app_login') }}" class="btn btn-sm btn-outline-light" type="button" style="margin-right: 20px">Log in</a>
-                    <a href="#" class="btn btn-sm btn-outline-light" type="button" style="margin-right: 20px">Sign up</a>
-
+                    <a href="{{ path('app_login') }}" class="btn btn-sm btn-outline-light me-3" type="button" >Prijavi se</a>
+                    <a href="{{ path('app_signup')}}" class="btn btn-sm btn-outline-light me-3" type="button" >Registracija</a>
                 </div>
             </div>
         </nav>
+
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+
         {% block body %}{% endblock %}
     </body>
 </html>
