@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Moj profil {% endblock %}
+
+{% block body %}
+
+    <div class="w-50 mx-auto my-5">
+        <h1>Tvoji podaci</h1>
+        <br>
+        {{ form_start(form) }}
+            {{ form_widget(form) }}
+            <br>
+        <button type="submit" class="btn btn-primary" style="background-color: #F482D4; border: none">Izmeni</button>
+        {{ form_end(form) }}
+    </div>
+
+{% endblock %}
