@@ -259,6 +259,19 @@ class User implements UserInterface
         return $this;
     }
 
+    public function getFullName():string
+    {
+        return $this->getFirstName() . " " . $this->getLastName();
+    }
+
+    public function getAvatar(int $size = 32):string
+    {
+        return 'https://ui-avatars.com/api/?' . http_build_query([
+                'name'=>$this->getFirstName(),
+                'size'=>$size,
+                'background'=>'random',
+            ]);
+    }
 
     /**
      * @Assert\Callback
