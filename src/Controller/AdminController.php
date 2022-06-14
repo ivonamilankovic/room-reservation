@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Room;
+use App\Entity\User;
 use App\Form\RoomFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -58,7 +59,6 @@ class AdminController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstrac
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()){
-
             $em->persist($room);
             $em->flush();
 

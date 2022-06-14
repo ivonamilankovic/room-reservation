@@ -35,14 +35,22 @@
                     </ul>
                     {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                         <div class="dropdown">
-                            <a href="#" class= "btn" type="button">
+                            <a class= "me-3 dropdown-toggle"
+                                    id="user-dropdown"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false"
+                                    style="text-decoration: none;">
                                 <img src="{{ app.user.avatar }}" alt="{{ app.user.fullName }} Avatar">
                             </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="user-dropdown">
+                                <li><a href="{{ path('app_user_profile') }}" class="dropdown-item">Moj profil</a></li>
+                                <li><a href="{{ path('app_user_change_password') }}" class="dropdown-item">Promeni lozinku</a></li>
+                                <li><a href="{{ path('app_logout') }}" class="dropdown-item">Odjavi se</a></li>
+                            </ul>
                         </div>
-                        <a href="{{ path('app_logout') }}" class="btn btn-sm btn-outline-light me-3" type="button">Odjavi se</a>
                     {% else %}
-                        <a href="{{ path('app_login') }}" class="btn btn-sm btn-outline-light me-3" type="button" >Prijavi se</a>
-                        <a href="{{ path('app_signup')}}" class="btn btn-sm btn-outline-light me-3" type="button" >Registracija</a>
+                        <a href="{{ path('app_login') }}" class="btn btn-sm me-3" type="button" >Prijavi se</a>
+                        <a href="{{ path('app_signup')}}" class="btn btn-sm me-3" type="button" >Registracija</a>
                     {% endif %}
                 </div>
             </div>
