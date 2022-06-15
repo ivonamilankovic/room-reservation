@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ room.name }}{% endblock %}
+{% block title %}{{ room.name }} - Rezervisi salu za sastanak{% endblock %}
 
 {% block body %}
 
@@ -8,6 +8,7 @@
             <div class="card-body m-5 px-5">
                 <h2 class="card-title text-center">{{ room.name }}</h2>
                 <br>
+                <hr>
                 <div class="card-text">
                     <div class="row">
                         <div class="col-6 fw-bolder text-end">Kapacitet:</div>
@@ -19,7 +20,22 @@
                         <div class="col-6">{{ room.city }}, {{ room.street }}</div>
                     </div>
                 </div>
+                <hr>
+                <br>
+
+                {% if form %}
+                    {{ form_start(form) }}
+                        {{ form_widget(form) }}
+                        <br>
+                        <a href="#" class="btn btn-primary d-block mx-auto" style="background-color: #F482D4; border: none">Rezerviši</a>
+                    {{ form_end(form) }}
+                {% else %}
+                    <a href="{{ path('app_login') }}" class="d-block text-center">Prijavi se za opciju rezervisanja sale za sastanak</a>
+                {% endif %}
+
             </div>
         </div>
+
+
 
 {% endblock %}

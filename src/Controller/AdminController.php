@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Room;
 use App\Entity\User;
 use App\Form\RoomFormType;
+use App\Repository\RoomRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,7 +23,22 @@ class AdminController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstrac
     }
 
     /**
-     * @Route("admin/rooms/insert", name="admin_insert_room")
+     * @Route("admin/rooms/all", name="admin_showall_room")
+     */
+    public function showAll(RoomRepository $rep):Response
+    {
+        $rooms = $rep->findAll();
+        if(!$rooms){
+            throw $this->createNotFoundException(sprintf('No rooms found!'));
+        }
+
+        return $this->render('admin/room/all.html.twig', [
+            'rooms' => $rooms
+        ]);
+    }
+
+    /**
+     * @Route("/admin/rooms/insert", name="admin_insert_room")
      */
     public function insert(EntityManagerInterface $em, Request $request):Response
     {
@@ -40,7 +56,9 @@ class AdminController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstrac
 
             $this->addFlash('success','Nova sala je kreirana!');
 
-            $this->redirectToRoute('app_showall_room');
+            $this->redirectToRoute('admin_showall_room',[
+               // 'success'=>'Nova sala je kreirana!',
+            ]);
 
         }
 
@@ -50,7 +68,7 @@ class AdminController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstrac
     }
 
     /**
-     * @Route("admin/rooms/edit/{id}", name="admin_edit_room")
+     * @Route("/admin/rooms/edit/{id}", name="admin_edit_room")
      */
     public function edit(EntityManagerInterface $em, Request $request, Room $room):Response
     {
@@ -64,8 +82,9 @@ class AdminController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstrac
 
             $this->addFlash('success','Upesno ste izmenili podatke o sali!');
 
-            $this->redirectToRoute('admin_edit_room', [
-                'id' =>$room->getId()
+            $this->redirectToRoute('admin_showall_room', [
+                'id' =>$room->getId(),
+                //'success'=>'Upesno ste izmenili podatke o sali!',
             ]);
 
         }

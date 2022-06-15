@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Sve sobe - Admin{% endblock %}
+
+{% block body %}
+
+
+    <a href="{{ path('admin_insert_room') }}" class="btn btn-warning mb-3">Dodaj novu sobu</a>
+
+    <table class="table table-hover bg-light">
+        <tr>
+            <th>RB</th>
+            <th>Naziv</th>
+            <th>Kapacitet</th>
+            <th>Grad</th>
+            <th>Ulica</th>
+            <th></th>
+        </tr>
+    {% set counter = 1 %}
+    {% for room in rooms %}
+        <tr>
+            <td>{{ counter }}</td>
+            <td>{{ room.name }}</td>
+            <td>{{ room.seatNumber }}</td>
+            <td>{{ room.city }}</td>
+            <td>{{ room.street }}</td>
+            <td><a href="{{ path('admin_edit_room', { 'id': room.id}) }}">Izmeni</a> <a href="">Izbrisi</a></td>
+        </tr>
+        {% set counter = counter + 1 %}
+    {% endfor %}
+    </table>
+
+{% endblock %}

@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Meeting;
 use App\Entity\Room;
+use App\Form\MeetingFormType;
 use App\Form\RoomFormType;
 use App\Repository\RoomRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -57,7 +59,7 @@ class RoomController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstract
     /**
      * @Route("rooms/{id}", name="app_showbyid_room")
      */
-    public function showById(RoomRepository $rep, int $id):Response
+    public function showById(RoomRepository $rep, int $id, EntityManagerInterface $em, Request $request):Response
     {
 
         $room = $rep->findOneBy(['id'=> $id]);
@@ -66,8 +68,33 @@ class RoomController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstract
             throw $this->createNotFoundException(sprintf('Room not found!'));
         }
 
+
+        if($this->getUser()){
+            $form = $this->createForm(MeetingFormType::class);
+
+            $form->handleRequest($request);
+
+            if($form->isSubmitted() && $form->isValid()){
+                /** @var Meeting $meeting */
+                $meeting = $form->getData();
+
+                $em->persist($meeting);
+                $em->flush();
+
+                $this->addFlash('success','Nova rezervacija sale za sastanak je kreirana!');
+
+                $this->redirectToRoute('app_showbyid_room');
+
+            }
+            return $this->render('room/showOne.html.twig', [
+                'room' => $room,
+                'form' => $form->createView()
+            ]);
+        }
+
         return $this->render('room/showOne.html.twig', [
-            'room' => $room
+            'room' => $room,
+            'form' => null
         ]);
     }
 
