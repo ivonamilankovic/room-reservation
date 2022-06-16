@@ -17,7 +17,7 @@ class UserInMeeting
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private int $id;
 
     /**
      * @ORM\ManyToMany(targetEntity=User::class, inversedBy="userInMeetings")

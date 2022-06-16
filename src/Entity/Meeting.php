@@ -17,7 +17,7 @@ class Meeting
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private int $id;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="meetings")
@@ -44,7 +44,7 @@ class Meeting
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $description;
+    private string $description;
 
     /**
      * @ORM\ManyToMany(targetEntity=UserInMeeting::class, mappedBy="meeting")

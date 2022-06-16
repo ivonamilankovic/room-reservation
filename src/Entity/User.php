@@ -21,44 +21,44 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private int $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $first_name;
+    private string $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $last_name;
+    private string $lastName;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $email;
+    private string $email;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $password;
+    private string $password;
 
     /**
      * @ORM\Column(type="string", length=10)
      */
-    private $role;
+    private string $role;
 
 
 
     /**
      * @ORM\OneToMany(targetEntity=Meeting::class, mappedBy="creator")
      */
-    private $meetings;
+    private Collection $meetings;
 
     /**
      * @ORM\ManyToMany(targetEntity=UserInMeeting::class, mappedBy="user")
      */
-    private $userInMeetings;
+    private Collection $userInMeetings;
 
     /**
      * @ORM\ManyToOne(targetEntity=Sector::class, inversedBy="users")
@@ -79,24 +79,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getFirstName(): ?string
     {
-        return $this->first_name;
+        return $this->firstName;
     }
 
-    public function setFirstName(string $first_name): self
+    public function setFirstName(string $firstName): self
     {
-        $this->first_name = $first_name;
+        $this->firstName = $firstName;
 
         return $this;
     }
 
     public function getLastName(): ?string
     {
-        return $this->last_name;
+        return $this->lastName;
     }
 
-    public function setLastName(string $last_name): self
+    public function setLastName(string $lastName): self
     {
-        $this->last_name = $last_name;
+        $this->lastName = $lastName;
 
         return $this;
     }
@@ -281,13 +281,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         if($this->getFirstName() === null){
             $context->buildViolation("Unesite ime!")
-                ->atPath('first_name')
+                ->atPath('firstName')
                 ->addViolation();
         }
 
         if($this->getLastName() === null){
             $context->buildViolation("Unesite prezime!")
-                ->atPath('last_name')
+                ->atPath('lastName')
                 ->addViolation();
         }
 

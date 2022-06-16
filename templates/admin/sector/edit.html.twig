@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Izmeni sektor - Admin{% endblock %}
+
+{% block body %}
+    <div class="w-50 mx-auto mt-5 p-4 border rounded bg-white">
+        <h1>Izmeni sektor</h1>
+        <br>
+        {{ include('admin/_form.html.twig',{
+            btn_title: 'Izmeni'
+        }) }}
+    </div>
+{% endblock %}

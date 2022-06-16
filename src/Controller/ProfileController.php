@@ -45,10 +45,11 @@ class ProfileController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstr
         $form = $this->createForm(ChangePasswordFormType::class);
         $form->handleRequest($request);
 
-        /*
+
         if($form->isSubmitted() && $form->isValid()){
             /**@var User $user*/
-           /* $user = $form->getData();
+            $user = $form->getData();
+
             $user->setPassword(password_hash($user->getPassword(), PASSWORD_BCRYPT));
 
             $em->persist($user);
@@ -56,7 +57,7 @@ class ProfileController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstr
 
             $this->addFlash('success', "Vasa lozinka je uspesno promenjena.");
             $this->redirect($request->getUri());
-        }*/
+        }
 
         return $this->render('profile/changePassword.html.twig',[
             'form'=>$form->createView(),

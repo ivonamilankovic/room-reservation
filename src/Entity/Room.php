@@ -17,27 +17,27 @@ class Room
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private int $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    private string $name;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $seat_number;
+    private int $seatNumber;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $city;
+    private string $city;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $street;
+    private string $street;
 
     /**
      * @ORM\OneToMany(targetEntity=Meeting::class, mappedBy="room")
@@ -68,12 +68,12 @@ class Room
 
     public function getSeatNumber(): ?int
     {
-        return $this->seat_number;
+        return $this->seatNumber;
     }
 
-    public function setSeatNumber(int $seat_number): self
+    public function setSeatNumber(int $seatNumber): self
     {
-        $this->seat_number = $seat_number;
+        $this->seatNumber = $seatNumber;
 
         return $this;
     }

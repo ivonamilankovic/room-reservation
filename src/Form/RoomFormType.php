@@ -15,7 +15,7 @@ class RoomFormType extends \Symfony\Component\Form\AbstractType
     {
         $builder
             ->add('name',TextType::class, ['label'=> "Naziv sale"])
-            ->add('seat_number', NumberType::class, ['label'=>"Kapacitet"])
+            ->add('seatNumber', NumberType::class, ['label'=>"Kapacitet"])
             ->add('city', TextType::class, ['label'=>"Grad"])
             ->add('street', TextType::class, ['label'=>'Ulica']);
     }

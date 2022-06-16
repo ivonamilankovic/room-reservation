@@ -15,6 +15,9 @@ class SecurityController extends \Symfony\Bundle\FrameworkBundle\Controller\Abst
     public function login(AuthenticationUtils $authenticationUtils){
 
         if ($this->getUser()) {
+          /*  if($this->isGranted('ROLE_ADMIN')){
+                return $this->redirectToRoute('admin_home');
+            }*/
             return $this->redirectToRoute('app_home');
         }
 
@@ -31,7 +34,7 @@ class SecurityController extends \Symfony\Bundle\FrameworkBundle\Controller\Abst
      * @Route("/logout", name="app_logout")
      */
     public function logout(){
-        throw new \LogicException('this sould never be reached');
+        throw new \LogicException('this should never be reached');
     }
 
 }

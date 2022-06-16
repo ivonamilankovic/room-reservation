@@ -14,8 +14,8 @@ class ProfileFormType extends \Symfony\Component\Form\AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('first_name', TextType::class, ['label'=>"Ime"])
-            ->add('last_name', TextType::class, ["label"=>"Prezime"])
+            ->add('firstName', TextType::class, ['label'=>"Ime"])
+            ->add('lastName', TextType::class, ["label"=>"Prezime"])
             ->add('email', EmailType::class, ["label"=>"Email adresa"])
             ->add('sector', null, ['label'=>'Sektor']);
     }
