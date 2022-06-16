@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  */
-class User implements UserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     /**
      * @ORM\Id
@@ -205,8 +205,9 @@ class User implements UserInterface
 
     public function getRoles(): array
     {
-        return array('ROLE_USER', 'ROLE_ADMIN');
+        return array('ROLE_USER');
     }
+
 
     public function setRoles(array $roles): self
     {

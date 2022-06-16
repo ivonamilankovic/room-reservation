@@ -78,6 +78,8 @@ class RoomController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstract
                 /** @var Meeting $meeting */
                 $meeting = $form->getData();
 
+                //treba izmene oko unosa
+
                 $em->persist($meeting);
                 $em->flush();
 

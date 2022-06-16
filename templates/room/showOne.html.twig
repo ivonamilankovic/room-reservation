@@ -27,7 +27,7 @@
                     {{ form_start(form) }}
                         {{ form_widget(form) }}
                         <br>
-                        <a href="#" class="btn btn-primary d-block mx-auto" style="background-color: #F482D4; border: none">Rezerviši</a>
+                        <button type="submit" class="btn btn-primary d-block mx-auto" style="background-color: #F482D4; border: none">Rezerviši</button>
                     {{ form_end(form) }}
                 {% else %}
                     <a href="{{ path('app_login') }}" class="d-block text-center">Prijavi se za opciju rezervisanja sale za sastanak</a>
