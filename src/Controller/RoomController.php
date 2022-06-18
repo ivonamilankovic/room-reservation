@@ -4,8 +4,10 @@ namespace App\Controller;
 
 use App\Entity\Meeting;
 use App\Entity\Room;
+use App\Entity\UserInMeeting;
 use App\Form\MeetingFormType;
 use App\Form\RoomFormType;
+use App\Repository\MeetingRepository;
 use App\Repository\RoomRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -59,15 +61,13 @@ class RoomController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstract
     /**
      * @Route("rooms/{id}", name="app_showbyid_room")
      */
-    public function showById(RoomRepository $rep, int $id, EntityManagerInterface $em, Request $request):Response
+    public function showById(RoomRepository $roomRep, MeetingRepository $meetingRep, int $id, EntityManagerInterface $em, Request $request):Response
     {
-
-        $room = $rep->findOneBy(['id'=> $id]);
+        $room = $roomRep->findOneBy(['id'=> $id]);
 
         if(!$room){
-            throw $this->createNotFoundException(sprintf('Room not found!'));
+            throw $this->createNotFoundException('Room not found!');
         }
-
 
         if($this->getUser()){
             $form = $this->createForm(MeetingFormType::class);
@@ -77,15 +77,43 @@ class RoomController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstract
             if($form->isSubmitted() && $form->isValid()){
                 /** @var Meeting $meeting */
                 $meeting = $form->getData();
+                $meeting->setCreator($this->getUser());
+                $meeting->setRoom($room);
 
-                //treba izmene oko unosa
+                //TODO provera da li je soba zauzeta u to vreme
 
+                $users = $form->get('users')->getData();
+                foreach ($users as $user){
+                    //svaki user koji je ubacen na sastanak
+                    $userInMeeting = new UserInMeeting();
+                    $new = $userInMeeting->addUser($user);
+
+                    //TODO provera da li je user zauzet za neki drugi sastanak --> bolje preko ajaxa?
+                    //ako je zauzet bice rezultata, ako ne nece
+                    $m = $meetingRep->findByIsUserOnAnotherMeeting($form->get('start')->getData(),$form->get('end')->getData(),$user->getId());
+
+                    if(!$m){
+                        $meeting->addUserInMeeting($new);
+                        $em->persist($userInMeeting);
+                    }
+                    else{
+                        //gde da ispisujem zauzete?
+                    }
+
+                }
+                $userInMeeting = new UserInMeeting();
+                $new = $userInMeeting->addUser($this->getUser()); //i kretor ide na sastanak
+                $new->setIsGoing(true);
+                $meeting->addUserInMeeting($new);
+                $em->persist($userInMeeting);
                 $em->persist($meeting);
                 $em->flush();
 
                 $this->addFlash('success','Nova rezervacija sale za sastanak je kreirana!');
 
-                $this->redirectToRoute('app_showbyid_room');
+                $this->redirectToRoute('app_showbyid_room', [
+                    'id' => $room->getId()
+                ]);
 
             }
             return $this->render('room/showOne.html.twig', [

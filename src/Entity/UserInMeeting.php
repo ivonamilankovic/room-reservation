@@ -32,7 +32,7 @@ class UserInMeeting
     /**
      * @ORM\Column(type="boolean")
      */
-    private $is_going;
+    private bool $is_going = false;
 
     public function __construct()
     {

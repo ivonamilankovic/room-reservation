@@ -8,7 +8,7 @@
 
     {% for room in rooms %}
 
-        <div class="card w-50 mx-auto my-5 shadow">
+        <div class="card w-75 mx-auto my-5 shadow">
             <div class="card-header ps-4">Sala #{{ counter }}</div>
             <div class="card-body mx-5 px-5 pb-4">
                 <h3 class="card-title">{{ room.name }}</h3>
@@ -23,7 +23,7 @@
                     <div class="col">{{ room.city }}, {{ room.street }}</div>
                 </div>
                 <br>
-                <a href="{{ path('app_showbyid_room', { 'id': room.id}) }}" class="btn btn-primary" style="background-color: #F482D4; border: none">Rezerviši ovu sobu</a>
+                <a href="{{ path('app_showbyid_room', { 'id': room.id}) }}" class="btn btn-primary" style="background-color: #F482D4; border: none">Rezerviši ovu salu</a>
             </div>
         </div>
 

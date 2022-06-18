@@ -19,15 +19,17 @@ class MeetingFormType extends \Symfony\Component\Form\AbstractType
             ->add('start', DateTimeType::class, ['label'=>'Pocetno vreme sastanka:'])
             ->add('end', DateTimeType::class, ['label'=>'Krajnje vreme sastanka:'])
             ->add('description', TextareaType::class, ['label'=>'Informacije o sastanku:'])
-            ->add('user', EntityType::class, [
+            ->add('users', EntityType::class, [
                 'label'=>'Odaberi kolege koje zelis da prisustvuju:',
                 'multiple' => true,
                 'expanded' => true,
                 'class' => User::class,
-                'choice_label' => 'email'
+                'choice_label' => 'email',
+                'mapped' => false
 
             ]);
 
+        //TODO da ne ispise prijavljenog usera na formi --> gde to uopste da se postavlja pitanje?
     }
 
     public function configureOptions(OptionsResolver $resolver)

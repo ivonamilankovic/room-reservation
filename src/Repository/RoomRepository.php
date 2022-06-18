@@ -66,6 +66,10 @@ class RoomRepository extends ServiceEntityRepository
         ;
     }
 
+    public function findByIsRoomTakenForAnotherMeeting($startTime, $endTime, $roomID){
+        //TODO
+    }
+
 
     /*
     public function findOneBySomeField($value): ?Room
