@@ -22,11 +22,12 @@ class SignupController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstra
         }
 
         $form = $this->createForm(SignupFormType::class);
-
+dd($request->request->get('firstName'));
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()){
             /** @var User $user */
             $user = $form->getData();
+
             $hashedPassword = $hasher->hashPassword($user, $user->getPassword());
             $user->setPassword($hashedPassword);
             $user->setRole('user');

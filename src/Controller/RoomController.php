@@ -80,7 +80,7 @@ class RoomController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstract
                 $meeting->setCreator($this->getUser());
                 $meeting->setRoom($room);
 
-                //TODO provera da li je soba zauzeta u to vreme
+                //TODO provera da li je soba zauzeta u to vreme; i nekako prikazati kada su zauzete? --> ajax?
 
                 $users = $form->get('users')->getData();
                 foreach ($users as $user){
@@ -88,9 +88,13 @@ class RoomController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstract
                     $userInMeeting = new UserInMeeting();
                     $new = $userInMeeting->addUser($user);
 
-                    //TODO provera da li je user zauzet za neki drugi sastanak --> bolje preko ajaxa?
+                    //TODO provera da li je user zauzet za neki drugi sastanak --> ajax?
                     //ako je zauzet bice rezultata, ako ne nece
-                    $m = $meetingRep->findByIsUserOnAnotherMeeting($form->get('start')->getData(),$form->get('end')->getData(),$user->getId());
+                    $m = $meetingRep->findByIsUserOnAnotherMeeting(
+                        $form->get('start')->getData(),
+                        $form->get('end')->getData(),
+                        $user
+                    );
 
                     if(!$m){
                         $meeting->addUserInMeeting($new);

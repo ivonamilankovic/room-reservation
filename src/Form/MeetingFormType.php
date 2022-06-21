@@ -29,7 +29,7 @@ class MeetingFormType extends \Symfony\Component\Form\AbstractType
 
             ]);
 
-        //TODO da ne ispise prijavljenog usera na formi --> gde to uopste da se postavlja pitanje?
+        //TODO da ne ispise prijavljenog usera na formi -->
     }
 
     public function configureOptions(OptionsResolver $resolver)

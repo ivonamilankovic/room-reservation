@@ -56,7 +56,7 @@ class MeetingRepository extends ServiceEntityRepository
       */
 
 
-    public function findByIsUserOnAnotherMeeting($startTime, $endTime, $userID)
+    public function findByIsUserOnAnotherMeeting($startTime, $endTime, $user)
     {
 
        /* $sql = "SELECT m.id FROM meeting m
@@ -71,15 +71,18 @@ class MeetingRepository extends ServiceEntityRepository
                               INNER JOIN App\Entity\UserInMeeting uim 
                               WHERE ((m.start BETWEEN :val1 AND :val2) OR (m.end BETWEEN :val1 AND :val2)
                               OR (:val1 BETWEEN m.start AND m.end) OR (:val2 BETWEEN m.start AND m.end))
-                              AND (uim.is_going = 1 AND uim.user = :id)"; //???????????
+                              AND (uim.is_going = 1 AND uim.user = :val3)"; //???????????
 
+        //dd($user->getId());
         $em = $this->getEntityManager();
         $query = $em->createQuery($sql)
-                    ->setParameter('id', $userID)
+                    ->setParameter('val3', $user->getId())
                     ->setParameter('val1', $startTime)
                     ->setParameter('val2', $endTime);
 
         return $query->getOneOrNullResult();
+        //[Semantical Error] line 0, col 381 near 'user = :val3': Error: Invalid PathExpression.
+        // StateFieldPathExpression or SingleValuedAssociationField expected.
 
             /*$this->getQueryBuilder()
             ->andWhere('m.start BETWEEN :val1 AND :val2')
