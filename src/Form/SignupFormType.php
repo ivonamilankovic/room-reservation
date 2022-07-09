@@ -23,23 +23,13 @@ class SignupFormType extends \Symfony\Component\Form\AbstractType
                 'type' =>PasswordType::class,
                 'invalid_message' => 'Lozinke se ne poklapaju',
                 'first_options' => ['label' => 'Lozinka'],
-                'second_options' => ['label' => 'Ponovi lozinku'],
+                'second_options' => ['label' => 'Ponovi lozinku']
             ])
             ->add('sector', null, [
                 'label'=>'Sektor',
                 'placeholder'=>"Odaberi svoj sektor"
             ]);
 
-        /*
-         * ->add('password', RepeatedType::class, [
-                'type' => PasswordType::class,
-                'first_options'=>['label'=>'Lozinka'],
-                'second_options'=>['label'=>'Ponovi lozinku'],
-                'invalid_message' => 'Lozinke se ne poklapaju!'
-            ])
-
-        //ne radi validacija onda...?
-        */
     }
 
     public function configureOptions(OptionsResolver $resolver)

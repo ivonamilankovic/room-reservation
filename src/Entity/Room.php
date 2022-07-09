@@ -6,6 +6,7 @@ use App\Repository\RoomRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=RoomRepository::class)
@@ -21,21 +22,52 @@ class Room
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
+     * @Assert\Type("string")
+     * @Assert\Length(
+     *     min = 2,
+     *     max = 255,
+     *     minMessage="Naziv sobe moze imati najmanje 2 karaktera.",
+     *     maxMessage="Naziv sobe moze imati najvise 255 karaktera."
+     * )
      */
     private string $name;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotBlank()
+     * @Assert\Type("integer")
+     * @Assert\Range(
+     *     min = 2,
+     *     max = 500,
+     *     notInRangeMessage = "Kapacitet treba biti u rasponu 2-500."
+     * )
      */
     private int $seatNumber;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
+     * @Assert\Type("string")
+     * @Assert\Length(
+     *     min = 2,
+     *     max = 255,
+     *     minMessage="Naziv grada moze imati najmanje 2 karaktera.",
+     *     maxMessage="Naziv grada moze imati najvise 255 karaktera."
+     * )
      */
     private string $city;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
+     * @Assert\Type("string")
+     * @Assert\Length(
+     *     min = 2,
+     *     max = 255,
+     *     minMessage="Naziv ulice moze imati najmanje 2 karaktera.",
+     *     maxMessage="Naziv ulice moze imati najvise 255 karaktera."
+     * )
      */
     private string $street;
 

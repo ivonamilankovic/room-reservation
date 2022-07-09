@@ -6,6 +6,7 @@ use App\Repository\SectorRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=SectorRepository::class)
@@ -21,6 +22,14 @@ class Sector
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
+     * @Assert\Type("string")
+     * @Assert\Length(
+     *     min = 2,
+     *     max = 255,
+     *     minMessage="Naziv sektora moze imati najmanje 2 karaktera.",
+     *     maxMessage="Naziv sektora moze imati najvise 255 karaktera."
+     * )
      */
     private string $name;
 

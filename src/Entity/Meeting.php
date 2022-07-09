@@ -6,6 +6,7 @@ use App\Repository\MeetingRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=MeetingRepository::class)
@@ -33,16 +34,26 @@ class Meeting
 
     /**
      * @ORM\Column(type="datetime")
+     * @Assert\DateTime()
      */
     private $start;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Assert\DateTime()
      */
     private $end;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
+     * @Assert\Type("string")
+     * @Assert\Length(
+     *     min = 10,
+     *     max = 255,
+     *     minMessage="Opis sastanka moze imati najmanje 10 karaktera.",
+     *     maxMessage="Opis sastanka moze imati najvise 255 karaktera."
+     * )
      */
     private string $description;
 

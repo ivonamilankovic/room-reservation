@@ -17,11 +17,12 @@ class ProfileFormType extends \Symfony\Component\Form\AbstractType
             ->add('firstName', TextType::class, ['label'=>"Ime"])
             ->add('lastName', TextType::class, ["label"=>"Prezime"])
             ->add('email', EmailType::class, ["label"=>"Email adresa"])
-            ->add('sector', null, ['label'=>'Sektor']);
+            //->add('sector', null, ['label'=>'Sektor'])
+        ;
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(['data_class'=>User::class]);
+
     }
 }

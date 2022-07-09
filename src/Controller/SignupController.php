@@ -6,8 +6,10 @@ use App\Entity\User;
 use App\Form\SignupFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
 
 class SignupController extends \Symfony\Bundle\FrameworkBundle\Controller\AbstractController
 {
@@ -15,22 +17,22 @@ class SignupController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstra
     /**
      * @Route("/signup", name="app_signup")
      */
-    public function signup(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $hasher){
+    public function signup(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $hasher, Security $security):Response
+    {
 
-        if ($this->getUser()) {
+        if ($security->getUser()) {
             return $this->redirectToRoute('app_home');
         }
 
-        $form = $this->createForm(SignupFormType::class);
-dd($request->request->get('firstName'));
+        $user = new User();
+        $form = $this->createForm(SignupFormType::class, $user);
         $form->handleRequest($request);
+        //dd($request); //ne uzma pass u form
         if($form->isSubmitted() && $form->isValid()){
-            /** @var User $user */
-            $user = $form->getData();
-
-            $hashedPassword = $hasher->hashPassword($user, $user->getPassword());
+            $plainPassword = $form->get('password')->getData();
+            $hashedPassword = $hasher->hashPassword($user, $plainPassword);
             $user->setPassword($hashedPassword);
-            $user->setRole('user');
+            $user->setRoles(array('ROLE_USER'));
 
             $em->persist($user);
             $em->flush();

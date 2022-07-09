@@ -25,28 +25,57 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
+     * @Assert\Type("string")
+     * @Assert\Length(
+     *     min = 2,
+     *     max = 50,
+     *     minMessage="Ime moze imati najmanje 2 karaktera.",
+     *     maxMessage="Ime moze imati najvise 50 karaktera."
+     * )
      */
     private string $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
+     * @Assert\Type("string")
+     * @Assert\Length(
+     *     min = 2,
+     *     max = 50,
+     *     minMessage="Prezime moze imati najmanje 2 karaktera.",
+     *     maxMessage="Prezime moze imati najvise 50 karaktera."
+     * )
      */
     private string $lastName;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
+     * @Assert\Type("string")
+     * @Assert\Email(
+     *     message = "Nepravilan format email-a. (Primer: imeprezime@mail.com )"
+     * )
      */
     private string $email;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
+     * @Assert\Type("string")
+     * @Assert\Length(
+     *     min = 8,
+     *     max = 255,
+     *     minMessage="Lozinka moze imati najmanje 8 karaktera.",
+     *     maxMessage="Lozinka moze imati najvise 255 karaktera."
+     * )
      */
-    private string $password;
+    private ?string $password = null;
 
     /**
-     * @ORM\Column(type="string", length=10)
+     * @ORM\Column(type="json")
      */
-    private string $role;
+    private array $roles=[];
 
 
 
@@ -125,14 +154,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getRole(): ?string
+    public function getRoles(): array
     {
-        return $this->role;
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
     }
 
-    public function setRole(string $role): self
+    public function setRoles(array $roles): self
     {
-        $this->role = $role;
+        $this->roles = $roles;
 
         return $this;
     }
@@ -203,17 +236,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return (string) $this->email;
     }
 
-    public function getRoles(): array
-    {
-        return array('ROLE_USER');
-    }
 
-
-    public function setRoles(array $roles): self
-    {
-        $this->role = $roles;
-        return $this;
-    }
 
     /**
      * This method can be removed in Symfony 6.0 - is not needed for apps that do not check user passwords.
@@ -278,7 +301,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @Assert\Callback
      */
     public function validate(ExecutionContextInterface $context, $payload){
-
+/*
         if($this->getFirstName() === null){
             $context->buildViolation("Unesite ime!")
                 ->atPath('firstName')
@@ -306,7 +329,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 ->atPath('password')
                 ->addViolation();
         }elseif(strlen($this->getPassword()) < 8){
-            $context->buildViolation("Lozinka mora imati barem 8 karaktera!")
+            $context->buildViolation("Lozinka moze imati barem 8 karaktera!")
                 ->atPath('password')
                 ->addViolation();
         }
@@ -315,7 +338,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $context->buildViolation("Izaberite sektor!")
                 ->atPath('sector')
                 ->addViolation();
-        }
+        }*/
 
     }
 

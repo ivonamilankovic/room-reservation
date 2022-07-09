@@ -15,9 +15,6 @@ class SecurityController extends \Symfony\Bundle\FrameworkBundle\Controller\Abst
     public function login(AuthenticationUtils $authenticationUtils){
 
         if ($this->getUser()) {
-          /*  if($this->isGranted('ROLE_ADMIN')){
-                return $this->redirectToRoute('admin_home');
-            }*/
             return $this->redirectToRoute('app_home');
         }
 

@@ -8,7 +8,9 @@ use App\Form\ProfileFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 class ProfileController extends \Symfony\Bundle\FrameworkBundle\Controller\AbstractController
 {
@@ -40,17 +42,20 @@ class ProfileController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstr
     /**
      * @Route("/profile/change_password", name="app_user_change_password")
      */
-    public function changePassword(Request $request, EntityManagerInterface $em):Response
+    public function changePassword(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $hasher):Response
     {
+        /**
+         * @var PasswordAuthenticatedUserInterface $user
+         */
+        $user = $this->getUser();
+
         $form = $this->createForm(ChangePasswordFormType::class);
         $form->handleRequest($request);
 
-
         if($form->isSubmitted() && $form->isValid()){
-            /**@var User $user*/
-            $user = $form->getData();
-
-            $user->setPassword(password_hash($user->getPassword(), PASSWORD_BCRYPT));
+            $plainPassword = $form->get('password')->getData();
+            $hashedPassword = $hasher->hashPassword($user, $plainPassword);
+            $user->setPassword($hashedPassword);
 
             $em->persist($user);
             $em->flush();
