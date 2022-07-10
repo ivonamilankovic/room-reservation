@@ -3,9 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Meeting;
-use App\Entity\Room;
+use App\Entity\UserInMeeting;
 use App\Form\MeetingFormType;
-use App\Form\RoomFormType;
 use App\Repository\MeetingRepository;
 use App\Repository\RoomRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -69,25 +68,102 @@ class RoomController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstract
         }
 
         if($this->getUser()){
-            $form = $this->createForm(MeetingFormType::class);
+            $form = $this->createForm(MeetingFormType::class, null, [
+                'loggedUser' => $this->getUser()->getId()
+            ]);
 
             $form->handleRequest($request);
 
-            //TODO submitovanje forme
+            if($form->isSubmitted() && $form->isValid()){
+                /**@var Meeting $meeting */
+                $meeting = $form->getData();
+                $meeting->setCreator($this->getUser());
+                $meeting->setRoom($room);
 
-            //TODO provera da li je soba zauzeta u to vreme; i nekako prikazati kada su zauzete? --> ajax?
+                $isRoomTaken = $meetingRep->findByIsRoomTakenForAnotherMeeting(
+                    $form->get('start')->getData(),
+                    $form->get('end')->getData(),
+                    $room->getId(),
+                );
 
-            //TODO provera da li je user zauzet za neki drugi sastanak --> ajax?
+                //TODO nekako prikazati kada je soba zauzeta?
+                //provera da li je soba zauzeta u dato vreme
+                if($isRoomTaken){
+                    //$this->addFlash('success', 'Soba je zauzeta u odabrano vreme! Sastanak nije sacuvan.');
+                    //zasto ne ispise ako je error ili warning type
+                    return $this->render('room/showOne.html.twig', [
+                        'room' => $room,
+                        'form' => $form->createView(),
+                        'error_msg' => 'Soba je zauzeta u odabrano vreme! Sastanak nije sacuvan.',
+                    ]);
+                }
+
+                //provera da li ima vise oznacenih osoba nego sto je kapacitet
+                $userForMeeting = $form->get('users')->getData();
+                if(count($userForMeeting) > $room->getSeatNumber()){
+                    //dd(count($userForMeeting));
+                    return $this->render('room/showOne.html.twig', [
+                        'room' => $room,
+                        'form' => $form->createView(),
+                        'error_msg' => 'Odabrali ste vise osoba nego sto je kapacitet sobe! Sastanak nije sacuvan.',
+                    ]);
+                }
+
+                //dodavanje svakoga u sastanak sa defaultom isGoing = 0
+                $errorMsg = "Osobe: ";
+
+                foreach ($userForMeeting as $user){
+                    //provera da li je osoba na drugom sastanku u dato vreme
+                    //TODO ako je user zauzet da pita da li ipak zelimo da ga doda
+                    $isPersonBusy = $meetingRep->findByIsUserOnAnotherMeeting(
+                        $form->get('start')->getData(),
+                        $form->get('end')->getData(),
+                        $user->getId(),
+                    );
+
+                    if($isPersonBusy){
+                        $errorMsg .= $user->getFullName(). ", ";
+                    }else {
+                        $userInMeeting = new UserInMeeting();
+                        $userInMeeting->setUser($user);
+                        $userInMeeting->setMeeting($meeting);
+                        $em->persist($userInMeeting);
+                    }
+                }
+
+                if($errorMsg !== "Osobe: "){
+                    return $this->render('room/showOne.html.twig', [
+                        'room' => $room,
+                        'form' => $form->createView(),
+                        'error_msg' => $errorMsg.' su u to vreme na drugom sastanku. Sastanak nije sacuvan.',
+                    ]);
+                }
+
+                //za kreatora se podrazumeva da prisustvuje
+                $creatorInMeeting = new UserInMeeting();
+                $creatorInMeeting->setUser($this->getUser());
+                $creatorInMeeting->setMeeting($meeting);
+                $creatorInMeeting->setIsGoing(true);
+
+                $em->persist($meeting);
+                $em->persist($creatorInMeeting);
+                $em->flush();
+
+                $this->addFlash('success', 'Uspesno ste kreirali novi sastanak!');
+
+            }
 
             return $this->render('room/showOne.html.twig', [
                 'room' => $room,
-                'form' => $form->createView()
+                'form' => $form->createView(),
+                'error_msg' => null,
             ]);
         }
 
         return $this->render('room/showOne.html.twig', [
             'room' => $room,
-            'form' => null
+            'form' => null,
+            'error_msg' => null,
         ]);
     }
 

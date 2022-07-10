@@ -20,7 +20,7 @@ class UserInMeeting
     /**
      * @ORM\Column(type="boolean")
      */
-    private $isGoing;
+    private $isGoing = false;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="userInMeetings")

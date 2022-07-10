@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Meeting;
 use App\Entity\User;
+use App\Entity\UserInMeeting;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -60,15 +61,32 @@ class MeetingRepository extends ServiceEntityRepository
 
     public function findByIsUserOnAnotherMeeting($startTime, $endTime, $userID)
     {
-
-        /* $sql = "SELECT m.id FROM meeting m
-                               INNER JOIN user_in_meeting_meeting uimm ON m.id = uimm.meeting_id
-                               INNER JOIN user_in_meeting uim ON uim.id = uimm.user_in_meeting_id
-                               INNER JOIN user_in_meeting_user uimu ON uim.id = uimu.user_in_meeting_id
-                               WHERE ((m.start BETWEEN :val1 AND :val2) OR (m.end BETWEEN :val1 AND :val2)
-                               OR (:val1 BETWEEN m.start AND m.end) OR (:val2 BETWEEN m.start AND m.end))
-                               AND (uim.is_going = 1 AND uimu.user_id = :id)";*/
-
-        return ;
+         return $this->getQueryBuilder()
+            ->leftJoin(UserInMeeting::class,'uim', Join::WITH, 'uim.user = :userID')
+            ->addSelect('uim')
+            ->andWhere('(m.start BETWEEN :val1 AND :val2) OR (m.end BETWEEN :val1 AND :val2) OR 
+            (:val1 BETWEEN m.start AND m.end) OR (:val2 BETWEEN m.start AND m.end)')
+            ->andWhere('uim.isGoing = 1')
+            ->setParameter('val1', $startTime)
+            ->setParameter('val2', $endTime)
+            ->setParameter('userID', $userID)
+            ->getQuery()
+            ->getResult()
+           ;
     }
+
+    public function findByIsRoomTakenForAnotherMeeting($startTime, $endTime, $roomID)
+    {
+        return  $this->getQueryBuilder()
+            ->andWhere('(m.start BETWEEN :val1 AND :val2) OR (m.end BETWEEN :val1 AND :val2) OR 
+            (:val1 BETWEEN m.start AND m.end) OR (:val2 BETWEEN m.start AND m.end)')
+            ->andWhere('m.room = :roomID')
+            ->setParameter('val1', $startTime)
+            ->setParameter('val2', $endTime)
+            ->setParameter('roomID', $roomID)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
 }

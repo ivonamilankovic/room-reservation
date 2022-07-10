@@ -45,22 +45,21 @@ class UserRepository extends ServiceEntityRepository
         }
     }
 
-    // /**
-    //  * @return User[] Returns an array of User objects
-    //  */
-    /*
-    public function findByExampleField($value)
+     /**
+      * @return User[]
+      */
+
+    public function findUsersForMeeting($loggedUser)
     {
+        //daje sve korisnike sem onog koji zeli da kreira sastanak
         return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('u.id', 'ASC')
-            ->setMaxResults(10)
+            ->andWhere('u.id != :val')
+            ->setParameter('val', $loggedUser)
             ->getQuery()
             ->getResult()
         ;
     }
-    */
+
 
     /*
     public function findOneBySomeField($value): ?User
