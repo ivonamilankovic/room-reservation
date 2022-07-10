@@ -90,9 +90,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $sector;
 
+    /**
+     * @ORM\OneToMany(targetEntity=UserInMeeting::class, mappedBy="user")
+     */
+    private $userInMeetings;
+
     public function __construct()
     {
         $this->meetings = new ArrayCollection();
+        $this->userInMeetings = new ArrayCollection();
 
     }
 
@@ -309,6 +315,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 ->addViolation();
         }*/
 
+    }
+
+    /**
+     * @return Collection<int, UserInMeeting>
+     */
+    public function getUserInMeetings(): Collection
+    {
+        return $this->userInMeetings;
+    }
+
+    public function addUserInMeeting(UserInMeeting $userInMeeting): self
+    {
+        if (!$this->userInMeetings->contains($userInMeeting)) {
+            $this->userInMeetings[] = $userInMeeting;
+            $userInMeeting->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserInMeeting(UserInMeeting $userInMeeting): self
+    {
+        if ($this->userInMeetings->removeElement($userInMeeting)) {
+            // set the owning side to null (unless already changed)
+            if ($userInMeeting->getUser() === $this) {
+                $userInMeeting->setUser(null);
+            }
+        }
+
+        return $this;
     }
 
 

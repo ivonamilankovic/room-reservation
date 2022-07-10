@@ -55,6 +55,16 @@ class Meeting
      */
     private string $description;
 
+    /**
+     * @ORM\OneToMany(targetEntity=UserInMeeting::class, mappedBy="meeting")
+     */
+    private $userInMeetings;
+
+    public function __construct()
+    {
+        $this->userInMeetings = new ArrayCollection();
+    }
+
 
 
     public function getId(): ?int
@@ -118,6 +128,36 @@ class Meeting
     public function setDescription(string $description): self
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserInMeeting>
+     */
+    public function getUserInMeetings(): Collection
+    {
+        return $this->userInMeetings;
+    }
+
+    public function addUserInMeeting(UserInMeeting $userInMeeting): self
+    {
+        if (!$this->userInMeetings->contains($userInMeeting)) {
+            $this->userInMeetings[] = $userInMeeting;
+            $userInMeeting->setMeeting($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserInMeeting(UserInMeeting $userInMeeting): self
+    {
+        if ($this->userInMeetings->removeElement($userInMeeting)) {
+            // set the owning side to null (unless already changed)
+            if ($userInMeeting->getMeeting() === $this) {
+                $userInMeeting->setMeeting(null);
+            }
+        }
 
         return $this;
     }
