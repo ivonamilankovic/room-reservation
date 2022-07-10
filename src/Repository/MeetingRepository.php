@@ -3,9 +3,11 @@
 namespace App\Repository;
 
 use App\Entity\Meeting;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -56,55 +58,17 @@ class MeetingRepository extends ServiceEntityRepository
       */
 
 
-    public function findByIsUserOnAnotherMeeting($startTime, $endTime, $user)
+    public function findByIsUserOnAnotherMeeting($startTime, $endTime, $userID)
     {
 
-       /* $sql = "SELECT m.id FROM meeting m
-                              INNER JOIN user_in_meeting_meeting uimm ON m.id = uimm.meeting_id
-                              INNER JOIN user_in_meeting uim ON uim.id = uimm.user_in_meeting_id
-                              INNER JOIN user_in_meeting_user uimu ON uim.id = uimu.user_in_meeting_id
-                              WHERE ((m.start BETWEEN :val1 AND :val2) OR (m.end BETWEEN :val1 AND :val2)
-                              OR (:val1 BETWEEN m.start AND m.end) OR (:val2 BETWEEN m.start AND m.end))
-                              AND (uim.is_going = 1 AND uimu.user_id = :id)";*/
+        /* $sql = "SELECT m.id FROM meeting m
+                               INNER JOIN user_in_meeting_meeting uimm ON m.id = uimm.meeting_id
+                               INNER JOIN user_in_meeting uim ON uim.id = uimm.user_in_meeting_id
+                               INNER JOIN user_in_meeting_user uimu ON uim.id = uimu.user_in_meeting_id
+                               WHERE ((m.start BETWEEN :val1 AND :val2) OR (m.end BETWEEN :val1 AND :val2)
+                               OR (:val1 BETWEEN m.start AND m.end) OR (:val2 BETWEEN m.start AND m.end))
+                               AND (uim.is_going = 1 AND uimu.user_id = :id)";*/
 
-        $sql = "SELECT m.id FROM App\Entity\Meeting m 
-                              INNER JOIN App\Entity\UserInMeeting uim 
-                              WHERE ((m.start BETWEEN :val1 AND :val2) OR (m.end BETWEEN :val1 AND :val2)
-                              OR (:val1 BETWEEN m.start AND m.end) OR (:val2 BETWEEN m.start AND m.end))
-                              AND (uim.is_going = 1 AND uim.user = :val3)"; //???????????
-
-        //dd($user->getId());
-        $em = $this->getEntityManager();
-        $query = $em->createQuery($sql)
-                    ->setParameter('val3', $user->getId())
-                    ->setParameter('val1', $startTime)
-                    ->setParameter('val2', $endTime);
-
-        return $query->getOneOrNullResult();
-        //[Semantical Error] line 0, col 381 near 'user = :val3': Error: Invalid PathExpression.
-        // StateFieldPathExpression or SingleValuedAssociationField expected.
-
-            /*$this->getQueryBuilder()
-            ->andWhere('m.start BETWEEN :val1 AND :val2')
-            ->orWhere('m.end BETWEEN :val1 AND :val2')
-            ->orWhere(':val1 BETWEEN m.start AND m.end')
-            ->orWhere(':val2 BETWEEN m.start AND m.end')
-            ->setParameter('val1', $startTime)
-            ->setParameter('val2', $endTime)
-            ->getQuery()
-            ->getResult()*/
+        return ;
     }
-
-
-    /*
-    public function findOneBySomeField($value): ?Meeting
-    {
-        return $this->createQueryBuilder('m')
-            ->andWhere('m.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

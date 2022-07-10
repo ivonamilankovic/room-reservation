@@ -85,11 +85,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $meetings;
 
     /**
-     * @ORM\ManyToMany(targetEntity=UserInMeeting::class, mappedBy="user")
-     */
-    private Collection $userInMeetings;
-
-    /**
      * @ORM\ManyToOne(targetEntity=Sector::class, inversedBy="users")
      * @ORM\JoinColumn(nullable=false)
      */
@@ -98,7 +93,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->meetings = new ArrayCollection();
-        $this->userInMeetings = new ArrayCollection();
+
     }
 
     public function getId(): ?int
@@ -201,32 +196,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, UserInMeeting>
-     */
-    public function getUserInMeetings(): Collection
-    {
-        return $this->userInMeetings;
-    }
-
-    public function addUserInMeeting(UserInMeeting $userInMeeting): self
-    {
-        if (!$this->userInMeetings->contains($userInMeeting)) {
-            $this->userInMeetings[] = $userInMeeting;
-            $userInMeeting->addUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUserInMeeting(UserInMeeting $userInMeeting): self
-    {
-        if ($this->userInMeetings->removeElement($userInMeeting)) {
-            $userInMeeting->removeUser($this);
-        }
-
-        return $this;
-    }
 
     /**
      * @see UserInterface

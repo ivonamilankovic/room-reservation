@@ -34,13 +34,11 @@ class Meeting
 
     /**
      * @ORM\Column(type="datetime")
-     * @Assert\DateTime()
      */
     private $start;
 
     /**
      * @ORM\Column(type="datetime")
-     * @Assert\DateTime()
      */
     private $end;
 
@@ -57,15 +55,7 @@ class Meeting
      */
     private string $description;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=UserInMeeting::class, mappedBy="meeting")
-     */
-    private $userInMeetings;
 
-    public function __construct()
-    {
-        $this->userInMeetings = new ArrayCollection();
-    }
 
     public function getId(): ?int
     {
@@ -132,30 +122,5 @@ class Meeting
         return $this;
     }
 
-    /**
-     * @return Collection<int, UserInMeeting>
-     */
-    public function getUserInMeetings(): Collection
-    {
-        return $this->userInMeetings;
-    }
 
-    public function addUserInMeeting(UserInMeeting $userInMeeting): self
-    {
-        if (!$this->userInMeetings->contains($userInMeeting)) {
-            $this->userInMeetings[] = $userInMeeting;
-            $userInMeeting->addMeeting($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUserInMeeting(UserInMeeting $userInMeeting): self
-    {
-        if ($this->userInMeetings->removeElement($userInMeeting)) {
-            $userInMeeting->removeMeeting($this);
-        }
-
-        return $this;
-    }
 }
