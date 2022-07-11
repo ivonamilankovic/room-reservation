@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Moji kreirani sastanci{% endblock %}
+
+{% block body %}
+
+
+    <div class="w-75 mx-auto my-5 p-4 border rounded bg-white shadow">
+        <h2 class="text-center" style="color: #0089DE">Moji kreirani sastanci</h2>
+        <hr>
+        {% if meetings %}
+            {% for meeting in meetings %}
+                <div class="border-start p-3 d-flex justify-content-between">
+                    <div>
+                        <h6>Sastanak od {{ meeting.start|date('H:i') }}h do {{ meeting.end|date('H:i') }}h
+                            u prostoriji '{{ meeting.room.name }}', {{ meeting.room.street}} - {{ meeting.room.city }}
+                        </h6>
+                        <p class="fst-italic"><span class="fst-normal">Tema sastanka: </span>{{ meeting.description }}</p>
+                        <br>
+                        {#  ne radi ovako
+                        {% set var =  {'mid' : meeting.id } %}
+                        {% include 'profile/listOfUsersForOneMeeting.html.twig' with var %}
+                        #}
+                    </div>
+                    <div class="d-flex align-items-end border-start px-3 bg-light">
+                        <p>Datum: <br>{{ meeting.start|date('d.m.Y') }}</p>
+                    </div>
+                </div>
+                <hr>
+            {% endfor %}
+        {% else %}
+            <p>Nemate novih kreiranih sastanaka.</p>
+        {% endif %}
+    </div>
+
+{% endblock %}

@@ -85,7 +85,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $meetings;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Sector::class, inversedBy="users")
+     * @ORM\ManyToOne(targetEntity=Sector::class, inversedBy="users", fetch="EAGER")
      * @ORM\JoinColumn(nullable=false)
      */
     private $sector;

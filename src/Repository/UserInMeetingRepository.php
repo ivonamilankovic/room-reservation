@@ -2,8 +2,14 @@
 
 namespace App\Repository;
 
+use App\Entity\Meeting;
+use App\Entity\Room;
+use App\Entity\User;
 use App\Entity\UserInMeeting;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query;
+use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -39,28 +45,57 @@ class UserInMeetingRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return UserInMeeting[] Returns an array of UserInMeeting objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('u')
-//            ->andWhere('u.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('u.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    private function getQueryBuilder(QueryBuilder $qb = null) :QueryBuilder
+    {
+        return $qb ?: $this->createQueryBuilder('uim');
+    }
 
-//    public function findOneBySomeField($value): ?UserInMeeting
-//    {
-//        return $this->createQueryBuilder('u')
-//            ->andWhere('u.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    /**
+     * @return UserInMeeting[]
+     */
+    public function findAllFutureMeetings($userID)
+    {
+        return $this->getQueryBuilder()
+            ->leftJoin(Meeting::class, 'm', Join::WITH, 'm.id = uim.meeting')
+            ->leftJoin(Room::class, 'r', Join::WITH, 'm.room = r.id')
+            //->addSelect(['m', 'r']) //ne treba jer pravi problem za pristup u twigu jer ne znam zasto
+            ->andWhere(' uim.user = :val AND uim.isGoing = 1')
+            ->andWhere('m.start > CURRENT_DATE()')
+            ->setParameter('val', $userID)
+            ->orderBy('m.start', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    /**
+     * @return UserInMeeting[]
+     */
+    public function findRequestsForMeetings($userID)
+    {
+        return $this->getQueryBuilder()
+            ->leftJoin(Meeting::class, 'm', Join::WITH, 'm.id = uim.meeting')
+            ->leftJoin(Room::class, 'r', Join::WITH, 'm.room = r.id')
+            ->andWhere(' uim.user = :val AND uim.isGoing = 0')
+            ->setParameter('val', $userID)
+            ->orderBy('m.start', 'ASC')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+    /**
+     * @return UserInMeeting[]
+     */
+    public function findAllUsersForMeeting($meetingID)
+    {
+        return $this->getQueryBuilder()
+            ->leftJoin(User::class, 'u', Join::WITH, 'uim.user = u.id')
+            ->andWhere(' uim.meeting = :val')
+            ->setParameter('val', $meetingID)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
 }

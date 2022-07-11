@@ -1,0 +1,16 @@
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Osoba</th>
+      <th scope="col">Potvrda o dolasku</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for p in people %}
+    <tr>
+        <td>{{ p.user.fullName }}</td>
+        <td>{{ p.isGoing }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

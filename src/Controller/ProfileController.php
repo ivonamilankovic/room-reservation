@@ -2,9 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Meeting;
 use App\Entity\User;
 use App\Form\ChangePasswordFormType;
 use App\Form\ProfileFormType;
+use App\Repository\MeetingRepository;
+use App\Repository\UserInMeetingRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -66,6 +69,55 @@ class ProfileController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstr
 
         return $this->render('profile/changePassword.html.twig',[
             'form'=>$form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/profile/meeting_requests", name="app_user_meeting_requests")
+     */
+    public function meetingRequests(UserInMeetingRepository $repository):Response
+    {
+        $meetings = $repository->findRequestsForMeetings($this->getUser()->getId());
+
+        return $this->render('profile/meetingRequests.html.twig',[
+            'meetings' => $meetings,
+        ]);
+    }
+
+    /**
+     * @Route("/profile/all_future_meetings", name="app_user_future_meetings")
+     */
+    public function allFutureMeetings(UserInMeetingRepository $repository):Response
+    {
+        $meetings = $repository->findAllFutureMeetings($this->getUser()->getId());
+
+        return $this->render('profile/futureMeetings.html.twig', [
+            'meetings' => $meetings,
+        ]);
+    }
+
+    /**
+     * @Route("/profile/my_created_meetings", name="app_user_created_meetings")
+     */
+    public function usersCreatedMeetings(MeetingRepository $repository):Response
+    {
+        $meetings = $repository->findMyCreatedMeetings($this->getUser()->getId());
+
+        return $this->render('profile/meetingsFromUser.html.twig',[
+            'meetings' => $meetings,
+        ]);
+    }
+
+    /**
+     * @Route("/profile/my_created_meetings/all_users/{mid}", name="app_user_allformeeting")
+     */
+    public function allUsersForOneMeeting(UserInMeetingRepository $repository, Meeting $m):Response
+    {
+        $people = $repository->findAllUsersForMeeting($m->getId());
+        dd($people);
+
+        return $this->render('profile/listOfUsersForOneMeeting.html.twig',[
+            'people' => $people,
         ]);
     }
 

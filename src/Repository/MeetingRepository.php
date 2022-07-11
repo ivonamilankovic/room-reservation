@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Meeting;
+use App\Entity\Room;
 use App\Entity\User;
 use App\Entity\UserInMeeting;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -55,10 +56,8 @@ class MeetingRepository extends ServiceEntityRepository
     }
 
      /**
-      * @return Meeting[] Returns an array of Meeting objects
+      * @return Meeting[]
       */
-
-
     public function findByIsUserOnAnotherMeeting($startTime, $endTime, $userID)
     {
          return $this->getQueryBuilder()
@@ -75,6 +74,9 @@ class MeetingRepository extends ServiceEntityRepository
            ;
     }
 
+    /**
+     * @return Meeting[]
+     */
     public function findByIsRoomTakenForAnotherMeeting($startTime, $endTime, $roomID)
     {
         return  $this->getQueryBuilder()
@@ -89,4 +91,19 @@ class MeetingRepository extends ServiceEntityRepository
             ;
     }
 
+    /**
+     * @return Meeting[]
+     */
+    public function findMyCreatedMeetings($userID)
+    {
+        return $this->getQueryBuilder()
+            ->leftJoin(Room::class, 'r', Join::WITH, 'm.room = r.id')
+            ->andWhere('m.creator = :val')
+            ->andWhere('m.start > CURRENT_DATE()')
+            ->setParameter('val', $userID)
+            ->orderBy('m.start', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

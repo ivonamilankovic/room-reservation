@@ -21,13 +21,13 @@ class Meeting
     private int $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="meetings")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="meetings", fetch="EAGER")
      * @ORM\JoinColumn(nullable=false)
      */
     private $creator;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Room::class, inversedBy="meetings")
+     * @ORM\ManyToOne(targetEntity=Room::class, inversedBy="meetings", fetch="EAGER")
      * @ORM\JoinColumn(nullable=false)
      */
     private $room;

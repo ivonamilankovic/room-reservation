@@ -23,13 +23,13 @@ class UserInMeeting
     private $isGoing = false;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="userInMeetings")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="userInMeetings", fetch="EAGER")
      * @ORM\JoinColumn(nullable=false)
      */
     private $user;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Meeting::class, inversedBy="userInMeetings")
+     * @ORM\ManyToOne(targetEntity=Meeting::class, inversedBy="userInMeetings", fetch="EAGER")
      * @ORM\JoinColumn(nullable=false)
      */
     private $meeting;
