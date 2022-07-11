@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Meeting;
 use App\Entity\UserInMeeting;
 use App\Form\MeetingFormType;
+use App\Form\SearchRoomByCityFormType;
 use App\Repository\MeetingRepository;
 use App\Repository\RoomRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -19,7 +20,7 @@ class RoomController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstract
     /**
      * @Route("rooms/showAll", name="app_showall_room")
      */
-    public function showAll(RoomRepository $rep):Response
+    public function showAll(RoomRepository $rep, Request $request):Response
     {
 
         $rooms = $rep->findAll();
@@ -30,8 +31,19 @@ class RoomController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstract
             throw $this->createNotFoundException(sprintf('No rooms found!'));
         }
 
+        $form = $this->createForm(SearchRoomByCityFormType::class);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+            $searchedCity = $form->get('search')->getData();
+            return $this->redirectToRoute('app_showbycity_room', [
+                'city' => $searchedCity
+            ]);
+        }
+
         return $this->render('room/showAll.html.twig', [
-            'rooms' => $rooms
+            'rooms' => $rooms,
+            'form' => $form->createView(),
         ]);
     }
 
@@ -40,11 +52,9 @@ class RoomController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstract
      */
     public function showByCity(RoomRepository $rep, string $city):Response
     {
-        $text = (new UnicodeString($city))
-            ->replace('+', ' ');
 
         if($city){
-           $rooms = $rep->findByCity($text); //custom query
+           $rooms = $rep->findByCity($city); //custom query
         }
 
         if(!$rooms){
@@ -52,7 +62,8 @@ class RoomController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstract
         }
 
         return $this->render('room/showAll.html.twig', [
-            'rooms' => $rooms
+            'rooms' => $rooms,
+            'form' => null,
         ]);
     }
 

@@ -52,7 +52,7 @@ class RoomRepository extends ServiceEntityRepository
     }
 
      /**
-      * @return Room[] Returns an array of Room objects
+      * @return Room[]
       */
 
     public function findByCity($value)
@@ -66,15 +66,14 @@ class RoomRepository extends ServiceEntityRepository
         ;
     }
 
-    /*
-    public function findOneBySomeField($value): ?Room
+    /**
+     * @return Room[]
+     */
+    public function findAllCities()
     {
-        return $this->createQueryBuilder('r')
-            ->andWhere('r.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        return $this->getEntityManager()
+            ->createQuery('SELECT r.city FROM App\Entity\Room r GROUP BY r.city')
+            ->getResult();
     }
-    */
+
 }

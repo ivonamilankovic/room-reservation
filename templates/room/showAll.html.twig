@@ -4,6 +4,16 @@
 
 {% block body %}
 
+    {% if form %}
+        {{ form_start(form) }}
+            <div class="d-flex mx-auto w-25">
+                {{ form_widget(form) }}
+                <button type="submit" class="btn btn-primary mb-3 ms-1" style="background-color: #F482D4; border: none">Pretrazi</button>
+            </div>
+        {{ form_end(form) }}
+    {% endif %}
+
+
     {% set counter = 1 %}
 
     {% for room in rooms %}
