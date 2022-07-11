@@ -21,8 +21,22 @@
                 <td>{{ user.firstName }}</td>
                 <td>{{ user.lastName }}</td>
                 <td>{{ user.email }}</td>
-                <td>{{ user.role }}</td>
-                <td><a href="{{ path('admin_edit_user', { 'id': user.id}) }}" class="btn btn-warning">Izmeni</a> <a href="{{ path('admin_delete_user', {'id': user.id}) }}" class="btn btn-danger">Izbrisi</a> <a href="" class="btn btn-success">Make admin</a> </td>
+                <td>{% for role in user.roles %} {{ role }}, {% endfor %}</td>
+                <td>
+                    <a href="{{ path('admin_edit_user', { 'id': user.id}) }}" class="btn btn-warning">Izmeni</a>
+                    <a href="{{ path('admin_delete_user', {'id': user.id}) }}" class="btn btn-danger">Izbrisi</a>
+                    {% set break = false %}
+                    {% for role in user.roles %}
+                        {% if not break %}
+                            {% if role == "ROLE_ADMIN" %}
+                                <a href="{{ path('admin_make_user_regular', {'id': user.id}) }}" class="btn btn-success">Make regular user</a>
+                                {% set break = true %}
+                            {% else %}
+                                <a href="{{ path('admin_make_user_admin', {'id': user.id}) }}" class="btn btn-success">Make admin</a>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </td>
             </tr>
             {% set counter = counter + 1 %}
         {% endfor %}

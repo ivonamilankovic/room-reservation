@@ -157,6 +157,30 @@ class AdminController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstrac
         return $this->redirectToRoute('admin_showall_users');
     }
 
+    /**
+     * @Route ("/admin/users/make_admin/{id}", name="admin_make_user_admin")
+     */
+    public function makeUserAdmin(EntityManagerInterface $em, User $user):Response
+    {
+        $user->setRoles(['ROLE_ADMIN']);
+        $em->persist($user);
+        $em->flush();
+
+        return $this->redirectToRoute('admin_showall_users');
+    }
+
+    /**
+     * @Route ("/admin/users/make_regular/{id}", name="admin_make_user_regular")
+     */
+    public function makeUserRegular(EntityManagerInterface $em, User $user):Response
+    {
+        $user->setRoles(['ROLE_USER']);
+        $em->persist($user);
+        $em->flush();
+
+        return $this->redirectToRoute('admin_showall_users');
+    }
+
     /*sectors*/
     /**
      * @Route("/admin/sector/all", name="admin_showall_sectors")
