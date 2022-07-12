@@ -1,16 +1,38 @@
-<table class="table">
+<table class="table table-hover table-light ms-4" style="width: 400px">
   <thead>
     <tr>
+      <th scope="col">#</th>
       <th scope="col">Osoba</th>
       <th scope="col">Potvrda o dolasku</th>
     </tr>
   </thead>
   <tbody>
-    {% for p in people %}
-    <tr>
-        <td>{{ p.user.fullName }}</td>
-        <td>{{ p.isGoing }}</td>
-    </tr>
+    {% set counter = 1 %}
+    {% for u in users %}
+        {% if u.isGoing %}
+            {% set cl = 'table-success' %}
+        {% else %}
+            {% set cl = 'table-warning' %}
+        {% endif %}
+        {% if u.declined %}
+            {% set cl = 'table-danger' %}
+        {% endif %}
+        <tr class = {{ cl }}>
+            <td>{{ counter }}</td>
+            <td>{{ u.user.fullName }}</td>
+            <td>
+            {% if u.isGoing %}
+                potvrdjeno
+            {% else %}
+                {% if u.declined %}
+                    odbijeno
+                {% else %}
+                    nema odgovora...
+                {% endif %}
+            {% endif %}
+            </td>
+        </tr>
+        {% set counter = counter + 1 %}
     {% endfor %}
   </tbody>
 </table>

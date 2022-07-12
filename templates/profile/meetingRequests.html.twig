@@ -17,8 +17,8 @@
                         <p class="fst-italic"><span class="fst-normal">Tema sastanka: </span>{{ meeting.meeting.description }}</p>
                         <br>
                         <div class="d-flex">
-                            <a href="" class="btn btn-success mx-2">Potvrdi dolazak</a>
-                            <a href="" class="btn btn-danger">Odbaci</a>
+                            <a href="{{ path('app_user_meeting_accept', { 'uim_id': meeting.id} ) }}" class="btn btn-success mx-2">Potvrdi dolazak</a>
+                            <a href="{{ path('app_user_meeting_decline', { 'uim_id': meeting.id} ) }}" class="btn btn-danger">Odbaci</a>
                         </div>
                     </div>
                     <div class="d-flex align-items-end border-start px-3 bg-light">

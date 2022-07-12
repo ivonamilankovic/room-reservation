@@ -162,6 +162,12 @@ class RoomController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstract
 
                 $this->addFlash('success', 'Uspesno ste kreirali novi sastanak!');
 
+                $meetings = $meetingRep->findMyCreatedMeetings($this->getUser()->getId());
+
+                return $this->render('profile/meetingsFromUser.html.twig',[
+                    'meetings' => $meetings,
+                ]);
+
             }
 
             return $this->render('room/showOne.html.twig', [

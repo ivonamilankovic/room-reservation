@@ -34,6 +34,11 @@ class UserInMeeting
      */
     private $meeting;
 
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $declined;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -71,6 +76,18 @@ class UserInMeeting
     public function setMeeting(?Meeting $meeting): self
     {
         $this->meeting = $meeting;
+
+        return $this;
+    }
+
+    public function isDeclined(): ?bool
+    {
+        return $this->declined;
+    }
+
+    public function setDeclined(?bool $declined): self
+    {
+        $this->declined = $declined;
 
         return $this;
     }

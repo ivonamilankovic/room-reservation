@@ -2,8 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Meeting;
-use App\Entity\User;
 use App\Form\ChangePasswordFormType;
 use App\Form\ProfileFormType;
 use App\Repository\MeetingRepository;
@@ -85,6 +83,44 @@ class ProfileController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstr
     }
 
     /**
+     * @Route("/profile/meeting_requests/accept/{uim_id}", name="app_user_meeting_accept")
+     */
+    public function acceptingMeeting(EntityManagerInterface $em, UserInMeetingRepository $repository, int $uim_id):Response
+    {
+        $user = $repository->findOneBy(['id' => $uim_id]);
+        $user->setIsGoing(true);
+        $em->persist($user);
+        $em->flush();
+
+        $meetings = $repository->findAllFutureMeetings($this->getUser()->getId());
+
+        $this->addFlash('success', 'Sastanak je prihvacen! Sve sastanke pogledajte ispod.');
+
+        return $this->render('profile/futureMeetings.html.twig', [
+            'meetings' => $meetings,
+        ]);
+    }
+
+    /**
+     * @Route("/profile/meeting_requests/decline/{uim_id}", name="app_user_meeting_decline")
+     */
+    public function declineMeeting(EntityManagerInterface $em, UserInMeetingRepository $repository, int $uim_id):Response
+    {
+        $user = $repository->findOneBy(['id' => $uim_id]);
+        $user->setDeclined(true);
+        $em->persist($user);
+        $em->flush();
+
+        $meetings = $repository->findAllFutureMeetings($this->getUser()->getId());
+
+        $this->addFlash('success', 'Sastanak je odbijen! Sve sastanke pogledajte ispod.');
+
+        return $this->render('profile/futureMeetings.html.twig', [
+            'meetings' => $meetings,
+        ]);
+    }
+
+    /**
      * @Route("/profile/all_future_meetings", name="app_user_future_meetings")
      */
     public function allFutureMeetings(UserInMeetingRepository $repository):Response
@@ -107,18 +143,6 @@ class ProfileController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstr
             'meetings' => $meetings,
         ]);
     }
-
-    /**
-     * @Route("/profile/my_created_meetings/all_users/{mid}", name="app_user_allformeeting")
-     */
-    public function allUsersForOneMeeting(UserInMeetingRepository $repository, Meeting $m):Response
-    {
-        $people = $repository->findAllUsersForMeeting($m->getId());
-        dd($people);
-
-        return $this->render('profile/listOfUsersForOneMeeting.html.twig',[
-            'people' => $people,
-        ]);
-    }
+    //TODO otkazivanje svojih kreiranih sastanaka
 
 }
