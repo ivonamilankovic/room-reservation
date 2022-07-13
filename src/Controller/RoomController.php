@@ -91,6 +91,26 @@ class RoomController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstract
                 $meeting->setCreator($this->getUser());
                 $meeting->setRoom($room);
 
+                //provera da li je kreator zauzet u dato vreme
+                $isCreatorBusy = $meetingRep->findByIsUserOnAnotherMeeting(
+                    $form->get('start')->getData(),
+                    $form->get('end')->getData(),
+                    $this->getUser()->getId(),
+                );
+                if($isCreatorBusy){
+                    return $this->render('room/showOne.html.twig', [
+                        'room' => $room,
+                        'form' => $form->createView(),
+                        'error_msg' => 'Vi ste u to vreme na drugom sastanku. Sastanak nije sacuvan.',
+                    ]);
+                }else {
+                    $creatorInMeeting = new UserInMeeting();
+                    $creatorInMeeting->setUser($this->getUser());
+                    $creatorInMeeting->setMeeting($meeting);
+                    $creatorInMeeting->setIsGoing(true);
+                    $em->persist($creatorInMeeting);
+                }
+
                 $isRoomTaken = $meetingRep->findByIsRoomTakenForAnotherMeeting(
                     $form->get('start')->getData(),
                     $form->get('end')->getData(),
@@ -111,8 +131,7 @@ class RoomController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstract
 
                 //provera da li ima vise oznacenih osoba nego sto je kapacitet
                 $userForMeeting = $form->get('users')->getData();
-                if(count($userForMeeting) > $room->getSeatNumber()){
-                    //dd(count($userForMeeting));
+                if(count($userForMeeting)+1 > $room->getSeatNumber()){ //+1 jer se broji i kreator
                     return $this->render('room/showOne.html.twig', [
                         'room' => $room,
                         'form' => $form->createView(),
@@ -120,9 +139,17 @@ class RoomController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstract
                     ]);
                 }
 
+                //provera da li ima manje oznacenih osoba nego sto je kapacitet
+                if(count($userForMeeting)+1 < $room->getSeatNumber()){
+                    return $this->render('room/showOne.html.twig', [
+                        'room' => $room,
+                        'form' => $form->createView(),
+                        'error_msg' => 'Odabrali ste manje osoba nego sto je kapacitet sobe! Sastanak nije sacuvan.',
+                    ]);
+                }
+
                 //dodavanje svakoga u sastanak sa defaultom isGoing = 0
                 $errorMsg = "Osobe: ";
-
                 foreach ($userForMeeting as $user){
                     //provera da li je osoba na drugom sastanku u dato vreme
                     //TODO ako je user zauzet da pita da li ipak zelimo da ga doda
@@ -131,7 +158,6 @@ class RoomController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstract
                         $form->get('end')->getData(),
                         $user->getId(),
                     );
-
                     if($isPersonBusy){
                         $errorMsg .= $user->getFullName(). ", ";
                     }else {
@@ -141,7 +167,6 @@ class RoomController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstract
                         $em->persist($userInMeeting);
                     }
                 }
-
                 if($errorMsg !== "Osobe: "){
                     return $this->render('room/showOne.html.twig', [
                         'room' => $room,
@@ -150,23 +175,12 @@ class RoomController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstract
                     ]);
                 }
 
-                //za kreatora se podrazumeva da prisustvuje
-                $creatorInMeeting = new UserInMeeting();
-                $creatorInMeeting->setUser($this->getUser());
-                $creatorInMeeting->setMeeting($meeting);
-                $creatorInMeeting->setIsGoing(true);
-
                 $em->persist($meeting);
-                $em->persist($creatorInMeeting);
                 $em->flush();
 
                 $this->addFlash('success', 'Uspesno ste kreirali novi sastanak!');
 
-                $meetings = $meetingRep->findMyCreatedMeetings($this->getUser()->getId());
-
-                return $this->render('profile/meetingsFromUser.html.twig',[
-                    'meetings' => $meetings,
-                ]);
+                return $this->redirectToRoute('app_user_created_meetings');
 
             }
 

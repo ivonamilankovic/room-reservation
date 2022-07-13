@@ -76,23 +76,9 @@ class UserInMeetingRepository extends ServiceEntityRepository
         return $this->getQueryBuilder()
             ->leftJoin(Meeting::class, 'm', Join::WITH, 'm.id = uim.meeting')
             ->leftJoin(Room::class, 'r', Join::WITH, 'm.room = r.id')
-            ->andWhere(' uim.user = :val AND uim.isGoing = 0')
+            ->andWhere(' uim.user = :val AND uim.isGoing = 0 AND uim.declined = 0')
             ->setParameter('val', $userID)
             ->orderBy('m.start', 'ASC')
-            ->getQuery()
-            ->getResult()
-            ;
-    }
-
-    /**
-     * @return UserInMeeting[]
-     */
-    public function findAllUsersForMeeting($meetingID)
-    {
-        return $this->getQueryBuilder()
-            ->leftJoin(User::class, 'u', Join::WITH, 'uim.user = u.id')
-            ->andWhere(' uim.meeting = :val')
-            ->setParameter('val', $meetingID)
             ->getQuery()
             ->getResult()
             ;

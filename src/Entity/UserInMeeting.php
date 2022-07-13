@@ -15,12 +15,12 @@ class UserInMeeting
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private int $id;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $isGoing = false;
+    private bool $isGoing = false;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="userInMeetings", fetch="EAGER")
@@ -35,9 +35,9 @@ class UserInMeeting
     private $meeting;
 
     /**
-     * @ORM\Column(type="boolean", nullable=true)
+     * @ORM\Column(type="boolean", nullable=false)
      */
-    private $declined;
+    private bool $declined = false;
 
     public function getId(): ?int
     {

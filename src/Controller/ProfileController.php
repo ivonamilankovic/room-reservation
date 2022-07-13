@@ -143,6 +143,27 @@ class ProfileController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstr
             'meetings' => $meetings,
         ]);
     }
-    //TODO otkazivanje svojih kreiranih sastanaka
+
+    /**
+     * @Route("/profile/my_created_meetings/delete/{m_id}", name="app_user_delete_meeting")
+     */
+    public function deleteMeeting(EntityManagerInterface $em, MeetingRepository $meetingRepository, UserInMeetingRepository $userInMeetingRepository, int $m_id):Response
+    {
+
+        $usersForMeeting = $userInMeetingRepository->findBy(['meeting'=>$m_id]);
+        foreach ($usersForMeeting as $u){
+            $em->remove($u);
+        }
+        $em->remove($meetingRepository->findOneBy(['id'=>$m_id]));
+        $em->flush();
+
+        $this->addFlash('success', 'Sastanak je uspesno otkazan.');
+
+        $meetings = $meetingRepository->findMyCreatedMeetings($this->getUser()->getId());
+
+        return $this->render('profile/meetingsFromUser.html.twig',[
+            'meetings' => $meetings,
+        ]);
+    }
 
 }
