@@ -37,18 +37,39 @@
                         <!--  <span class="position-absolute top-0 start-100 translate-middle badge
                         border border-light rounded-circle bg-danger p-2"></span>
                         ->tackica za poruke...-->
+                        {% set message = false %}
+                        {% set messageNumber = 0 %}
+                        {% for m in app.user.userInMeetings %}
+                            {% if m.isGoing == 0 %}
+                                {% set message = true %}
+                                {% set messageNumber = messageNumber + 1 %}
+                            {% endif %}
+                        {% endfor %}
+                        <div class="dropdown ">
 
-                        <div class="dropdown">
-                            <a class= "me-3 dropdown-toggle"
+                            <a class= "me-3 position-relative"
                                     id="user-dropdown"
                                     data-bs-toggle="dropdown"
                                     aria-expanded="false"
                                     style="text-decoration: none">
                                 <img src="{{ app.user.avatar }}" alt="{{ app.user.fullName }} Avatar">
+                                {% if message %}
+                                    <span class="position-absolute top-0 start-100 translate-middle badge
+                                    border border-light rounded-circle bg-danger p-2">
+                                    <span class="visually-hidden">New alerts</span>
+                                    </span>
+                                {% endif %}
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="user-dropdown">
                                 <li><a href="{{ path('app_user_created_meetings') }}" class="dropdown-item">Moji kreirani sastanci</a></li>
-                                <li><a href="{{ path('app_user_meeting_requests') }}" class="dropdown-item">Pozivi za sastanke</a></li>
+                                <li><a href="{{ path('app_user_meeting_requests') }}" class="dropdown-item">Pozivi za sastanke
+                                        {% if message %}
+                                            <span class="badge bg-danger p-1" style="font-size: 8pt !important;">
+                                            {{ messageNumber }}
+                                            </span>
+                                        {% endif %}
+                                    </a>
+                                </li>
                                 <li><a href="{{ path('app_user_future_meetings') }}" class="dropdown-item">Svi buduci sastanci</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a href="{{ path('app_user_profile') }}" class="dropdown-item">Moj profil</a></li>
