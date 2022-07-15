@@ -163,4 +163,9 @@ class Room
 
         return $this;
     }
+
+    public function __toString()
+    {
+        return $this->name." - ".$this->seatNumber." osoba";
+    }
 }

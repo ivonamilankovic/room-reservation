@@ -80,7 +80,8 @@ class RoomController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstract
 
         if($this->getUser()){
             $form = $this->createForm(MeetingFormType::class, null, [
-                'loggedUser' => $this->getUser()->getId()
+                'loggedUser' => $this->getUser()->getId(),
+                'selected_room' => $room
             ]);
 
             $form->handleRequest($request);

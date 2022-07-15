@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Svi sastanci - Admin{% endblock %}
+
+{% block body %}
+
+
+    <a href="{{ path('admin_insert_meeting') }}" class="btn btn-warning mb-3">Dodaj novi sastanak</a>
+
+    <table class="table table-hover bg-light">
+        <tr>
+            <th>RB</th>
+            <th>Kreator</th>
+            <th>Sala</th>
+            <th>Pocetak</th>
+            <th>Kraj</th>
+            <th>Tema</th>
+            <th>Pozvane osobe</th>
+            <th></th>
+        </tr>
+        {% set counter = 1 %}
+        {% for meeting in meetings %}
+            <tr>
+                <td>{{ counter }}</td>
+                <td>{{ meeting.creator.fullName }}</td>
+                <td>{{ meeting.room.name }}</td>
+                <td>{{ meeting.start|date('d.m.Y H:i') }}</td>
+                <td>{{ meeting.end|date('d.m.Y H:i') }}</td>
+                <td>{{ meeting.description }}</td>
+                <td>{% for m in meeting.userInMeetings.toArray %}
+                        {{ m.user.fullName }} -
+                        {% if m.isGoing %}
+                            <i>potvrdjeno</i>
+                        {% else %}
+                            {% if m.declined %}
+                                <i>odbijeno</i>
+                            {% else %}
+                                <i>bez odgovora</i>
+                            {% endif %}
+                        {% endif %}
+                        <br>
+                    {% endfor %}
+                </td>
+                <td><a href="{{ path('admin_edit_meeting', {'id' : meeting.id}) }}" class="btn btn-warning">Izmeni</a> <a href="{{ path('admin_delete_meeting', {'id' : meeting.id}) }}" class="btn btn-danger">Izbrisi</a></td>
+            </tr>
+            {% set counter = counter + 1 %}
+        {% endfor %}
+    </table>
+
+{% endblock %}

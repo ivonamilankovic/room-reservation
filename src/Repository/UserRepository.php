@@ -3,9 +3,11 @@
 namespace App\Repository;
 
 use App\Entity\User;
+use App\Entity\UserInMeeting;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -58,6 +60,21 @@ class UserRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
         ;
+    }
+
+    /**
+     * @return User[]
+     */
+    public function findUsersOnMeeting($meeting_id)
+    {
+        //daje korisnike da datom sastanku
+        return $this->createQueryBuilder('u')
+            ->leftJoin(UserInMeeting::class, 'uim', Join::WITH, 'uim.user = u.id')
+            ->andWhere('uim.meeting = :val')
+            ->setParameter('val', $meeting_id)
+            ->getQuery()
+            ->getResult()
+            ;
     }
 
 
