@@ -97,6 +97,7 @@ class RoomController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstract
                     $form->get('start')->getData(),
                     $form->get('end')->getData(),
                     $this->getUser()->getId(),
+                    0
                 );
                 if($isCreatorBusy){
                     return $this->render('room/showOne.html.twig', [
@@ -158,6 +159,7 @@ class RoomController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstract
                         $form->get('start')->getData(),
                         $form->get('end')->getData(),
                         $user->getId(),
+                        0
                     );
                     if($isPersonBusy){
                         $errorMsg .= $user->getFullName(). ", ";

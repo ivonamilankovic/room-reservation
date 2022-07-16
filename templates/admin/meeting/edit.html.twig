@@ -6,6 +6,11 @@
     <div class="w-50 mx-auto mt-5 p-4 border rounded bg-white">
         <h1>Izmeni sastanak</h1>
         <br>
+        {%  if error_msg %}
+            <div class="alert alert-danger">
+                {{ error_msg }}
+            </div>
+        {% endif %}
         {{ include('admin/_form.html.twig',{
             btn_title: 'Izmeni'
         }) }}

@@ -279,10 +279,11 @@ class AdminController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstrac
     /**
      * @Route("/admin/meeting/edit/{id}", name="admin_edit_meeting")
      */
-    public function editMeeting(EntityManagerInterface $em, Request $request, MeetingRepository $meetingRep, UserInMeetingRepository $userInMeetingRepository, int $id):Response
+    public function editMeeting(EntityManagerInterface $em, Request $request, UserRepository $userRepository,MeetingRepository $meetingRep, UserInMeetingRepository $userInMeetingRepository, int $id): Response
     {
 
         $meetingFromDB = $meetingRep->findOneBy(['id' => $id]);
+        $meetingFromDBUsers = $userRepository->findUsersOnMeeting($id);
 
         $form = $this->createForm(MeetingFormType::class, $meetingFromDB, [
             'room_field' => true,
@@ -297,17 +298,91 @@ class AdminController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstrac
 
             //TODO provere
 
+            $newMeeting = $form->getData();
+            $newMeetingUsers = $form->get('users')->getData();
+
+            //da li je soba zauzeta
+            if (($meetingFromDB->getRoom() !== $newMeeting->getRoom()) || ($meetingFromDB->getStart() !== $newMeeting->getStart()) || ($meetingFromDB->getEnd() !== $newMeeting->getEnd())) {
+                $isRoomTaken = $meetingRep->findByIsRoomTakenForAnotherMeeting(
+                    $newMeeting->getStart(),
+                    $newMeeting->getEnd(),
+                    $newMeeting->getRoom()->getId(),
+                );
+
+                if ($isRoomTaken) {
+                    return $this->render('admin/meeting/edit.html.twig', [
+                        'form' => $form->createView(),
+                        'error_msg' => 'Soba je zauzeta u odabrano vreme! Sastanak nije sacuvan.',
+                    ]);
+                }
+            }
+            //provera da li ima vise oznacenih osoba nego sto je kapacitet
+            if (count($newMeetingUsers) > $newMeeting->getRoom()->getSeatNumber()) {
+                return $this->render('admin/meeting/edit.html.twig', [
+                    'form' => $form->createView(),
+                    'error_msg' => 'Odabrali ste vise osoba nego sto je kapacitet sobe! Sastanak nije sacuvan.',
+                ]);
+            }
+
+            //provera da li ima manje oznacenih osoba nego sto je kapacitet
+            if (count($newMeetingUsers) < $newMeeting->getRoom()->getSeatNumber()) {
+                return $this->render('admin/meeting/edit.html.twig', [
+                    'form' => $form->createView(),
+                    'error_msg' => 'Odabrali ste manje osoba nego sto je kapacitet sobe! Sastanak nije sacuvan.',
+                ]);
+            }
+
+            //provera svake osobe da li je zauzeta na drugom sastanku
+            $errorMsg = "Osobe: ";
+            foreach ($newMeetingUsers as $user){
+                $isPersonBusy = $meetingRep->findByIsUserOnAnotherMeeting(
+                    $newMeeting->getStart(),
+                    $newMeeting->getEnd(),
+                    $user->getId(),
+                    $newMeeting->getId()
+                );
+                if ($isPersonBusy) {
+                    $errorMsg .= $user->getFullName() . ", ";
+                }else{
+                    if(!in_array($user, $meetingFromDBUsers, true)){
+                        //ako je dodata osoba koja pre nije bila na sastanku
+                        $userInMeeting = new UserInMeeting();
+                        $userInMeeting->setUser($user);
+                        $userInMeeting->setMeeting($newMeeting);
+                        $em->persist($userInMeeting);
+                    }
+                    $usersToDeleteFromMeeting = array_diff($meetingFromDBUsers,$newMeetingUsers);
+                    //brisanje usera koji su izbaceni sa sastanka
+                    foreach ($usersToDeleteFromMeeting as $us){
+                        $u = $userInMeetingRepository->findOneBy(['user' => $us->getId(), 'meeting' => $newMeeting->getId()]);
+                        $em->remove($u);
+                    }
+                }
+            }
+            if ($errorMsg !== "Osobe: ") {
+                return $this->render('admin/meeting/edit.html.twig', [
+                    'form' => $form->createView(),
+                    'error_msg' => $errorMsg . ' su u to vreme na drugom sastanku. Sastanak nije sacuvan.',
+                ]);
+            }
+
+            $em->persist($newMeeting);
+            $em->flush();
+
+            $this->addFlash('success', 'Uspesno ste izmenili sastanak!');
+            return $this->redirectToRoute('admin_showall_meetings');
         }
 
         return $this->render('admin/meeting/edit.html.twig', [
             'form' => $form->createView(),
+            'error_msg' => null
         ]);
     }
 
     /**
      * @Route("/admin/meeting/insert", name="admin_insert_meeting")
      */
-    public function insertMeeting(Request $request, EntityManagerInterface $em, MeetingRepository $meetingRep):Response
+    public function insertMeeting(Request $request, EntityManagerInterface $em, MeetingRepository $meetingRep): Response
     {
         $form = $this->createForm(MeetingFormType::class, null, [
             'room_field' => true,
@@ -327,7 +402,7 @@ class AdminController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstrac
             );
 
             //provera da li je soba zauzeta u dato vreme
-            if($isRoomTaken){
+            if ($isRoomTaken) {
                 return $this->render('admin/meeting/new.html.twig', [
                     'form' => $form->createView(),
                     'error_msg' => 'Soba je zauzeta u odabrano vreme! Sastanak nije sacuvan.',
@@ -336,7 +411,7 @@ class AdminController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstrac
 
             //provera da li ima vise oznacenih osoba nego sto je kapacitet
             $userForMeeting = $form->get('users')->getData();
-            if(count($userForMeeting) > $room->getSeatNumber()){
+            if (count($userForMeeting) > $room->getSeatNumber()) {
                 return $this->render('admin/meeting/new.html.twig', [
                     'form' => $form->createView(),
                     'error_msg' => 'Odabrali ste vise osoba nego sto je kapacitet sobe! Sastanak nije sacuvan.',
@@ -344,7 +419,7 @@ class AdminController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstrac
             }
 
             //provera da li ima manje oznacenih osoba nego sto je kapacitet
-            if(count($userForMeeting) < $room->getSeatNumber()){
+            if (count($userForMeeting) < $room->getSeatNumber()) {
                 return $this->render('admin/meeting/new.html.twig', [
                     'form' => $form->createView(),
                     'error_msg' => 'Odabrali ste manje osoba nego sto je kapacitet sobe! Sastanak nije sacuvan.',
@@ -353,27 +428,28 @@ class AdminController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstrac
 
             //dodavanje svakoga u sastanak sa defaultom isGoing = 0
             $errorMsg = "Osobe: ";
-            foreach ($userForMeeting as $user){
+            foreach ($userForMeeting as $user) {
                 //provera da li je osoba na drugom sastanku u dato vreme
                 //TODO ako je user zauzet da pita da li ipak zelimo da ga doda
                 $isPersonBusy = $meetingRep->findByIsUserOnAnotherMeeting(
                     $form->get('start')->getData(),
                     $form->get('end')->getData(),
                     $user->getId(),
+                    0
                 );
-                if($isPersonBusy){
-                    $errorMsg .= $user->getFullName(). ", ";
-                }else {
+                if ($isPersonBusy) {
+                    $errorMsg .= $user->getFullName() . ", ";
+                } else {
                     $userInMeeting = new UserInMeeting();
                     $userInMeeting->setUser($user);
                     $userInMeeting->setMeeting($meeting);
                     $em->persist($userInMeeting);
                 }
             }
-            if($errorMsg !== "Osobe: "){
+            if ($errorMsg !== "Osobe: ") {
                 return $this->render('admin/meeting/new.html.twig', [
                     'form' => $form->createView(),
-                    'error_msg' => $errorMsg.' su u to vreme na drugom sastanku. Sastanak nije sacuvan.',
+                    'error_msg' => $errorMsg . ' su u to vreme na drugom sastanku. Sastanak nije sacuvan.',
                 ]);
             }
 

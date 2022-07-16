@@ -58,17 +58,18 @@ class MeetingRepository extends ServiceEntityRepository
      /**
       * @return Meeting[]
       */
-    public function findByIsUserOnAnotherMeeting($startTime, $endTime, $userID)
+    public function findByIsUserOnAnotherMeeting($startTime, $endTime, $userID, $meetingID)
     {
          return $this->getQueryBuilder()
             ->leftJoin(UserInMeeting::class,'uim', Join::WITH, 'uim.user = :userID')
             ->addSelect('uim')
             ->andWhere('(m.start BETWEEN :val1 AND :val2) OR (m.end BETWEEN :val1 AND :val2) OR 
             (:val1 BETWEEN m.start AND m.end) OR (:val2 BETWEEN m.start AND m.end)')
-            ->andWhere('uim.isGoing = 1')
+            ->andWhere('uim.isGoing = 1 AND m.id != :meetingID')
             ->setParameter('val1', $startTime)
             ->setParameter('val2', $endTime)
             ->setParameter('userID', $userID)
+             ->setParameter('meetingID', $meetingID)
             ->getQuery()
             ->getResult()
            ;
