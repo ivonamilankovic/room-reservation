@@ -12,7 +12,7 @@
             <th>RB</th>
             <th>Kreator</th>
             <th>Sala</th>
-            <th>Pocetak</th>
+            <th>Početak</th>
             <th>Kraj</th>
             <th>Tema</th>
             <th>Pozvane osobe</th>
@@ -30,7 +30,7 @@
                 <td>{% for m in meeting.userInMeetings.toArray %}
                         {{ m.user.fullName }} -
                         {% if m.isGoing %}
-                            <i>potvrdjeno</i>
+                            <i>potvrđeno</i>
                         {% else %}
                             {% if m.declined %}
                                 <i>odbijeno</i>
@@ -41,7 +41,7 @@
                         <br>
                     {% endfor %}
                 </td>
-                <td><a href="{{ path('admin_edit_meeting', {'id' : meeting.id}) }}" class="btn btn-warning">Izmeni</a> <a href="{{ path('admin_delete_meeting', {'id' : meeting.id}) }}" class="btn btn-danger">Izbrisi</a></td>
+                <td><a href="{{ path('admin_edit_meeting', {'id' : meeting.id}) }}" class="btn btn-warning">Izmeni</a> <a href="{{ path('admin_delete_meeting', {'id' : meeting.id}) }}" class="btn btn-danger">Izbriši</a></td>
             </tr>
             {% set counter = counter + 1 %}
         {% endfor %}

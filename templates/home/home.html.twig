@@ -1,9 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %} Home page {% endblock %}
+{% block title %} Početna stranica {% endblock %}
 
 {% block body %}
 
-    <h1>hello</h1>
+    <div class="container text-center" style="color: white; margin-top: 180px">
+        <h1>Dobrodošli u info<span style="color:#F482D4;">salu</span>!</h1>
+        <p>- mesto za rezervisanje sala za sastanke -</p>
+        <a href="{{ path('app_showall_room') }}" class="btn btn-primary" style="background-color: #F482D4; border: none">Započni!</a>
+    </div>
 
 {% endblock %}

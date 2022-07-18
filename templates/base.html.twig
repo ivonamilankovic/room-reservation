@@ -22,21 +22,21 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="{{ path('app_home') }}" style="color: white">Početna</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('app_showall_room') }}" style="color: white">Sve sale</a>
+                            <a class="nav-link" href="{{ path('app_showall_room') }}" style="color: white">Rezerviši salu</a>
                         </li>
                         {% if is_granted('ROLE_ADMIN') %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ path('admin_home') }}" style="color: white">Admin</a>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" href="{{ path('admin_home') }}" style="color: white">Admin</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="{{ path('admin_showall_users') }}">Korisnici</a></li>
+                                    <li><a class="dropdown-item" href="{{ path('admin_showall_meetings') }}">Sastanci</a></li>
+                                    <li><a class="dropdown-item" href="{{ path('admin_showall_room') }}">Sale</a></li>
+                                    <li><a class="dropdown-item" href="{{ path('admin_showall_sectors') }}">Sektori</a></li>
+                                </ul>
                             </li>
                         {% endif %}
                     </ul>
                     {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                        <!--  <span class="position-absolute top-0 start-100 translate-middle badge
-                        border border-light rounded-circle bg-danger p-2"></span>
-                        ->tackica za poruke...-->
                         {% set message = false %}
                         {% set messageNumber = 0 %}
                         {% for m in app.user.userInMeetings %}
@@ -70,7 +70,7 @@
                                         {% endif %}
                                     </a>
                                 </li>
-                                <li><a href="{{ path('app_user_future_meetings') }}" class="dropdown-item">Svi buduci sastanci</a></li>
+                                <li><a href="{{ path('app_user_future_meetings') }}" class="dropdown-item">Svi budući sastanci</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a href="{{ path('app_user_profile') }}" class="dropdown-item">Moj profil</a></li>
                                 <li><a href="{{ path('app_user_change_password') }}" class="dropdown-item">Promeni lozinku</a></li>

@@ -26,7 +26,7 @@
                 <td>{% for role in user.roles %} {{ role }}, {% endfor %}</td>
                 <td>
                     <a href="{{ path('admin_edit_user', { 'id': user.id}) }}" class="btn btn-warning">Izmeni</a>
-                    <a href="{{ path('admin_delete_user', {'id': user.id}) }}" class="btn btn-danger">Izbrisi</a>
+                    <a href="{{ path('admin_delete_user', {'id': user.id}) }}" class="btn btn-danger">Izbriši</a>
                     {% set break = false %}
                     {% for role in user.roles %}
                         {% if not break %}

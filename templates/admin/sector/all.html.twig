@@ -18,7 +18,7 @@
             <tr>
                 <td>{{ counter }}</td>
                 <td>{{ sector.name }}</td>
-                <td><a href="{{ path('admin_edit_sector', { 'id': sector.id}) }}" class="btn btn-warning">Izmeni</a> <a href="{{ path('admin_delete_sector', {'id' : sector.id })}}" class="btn btn-danger">Izbrisi</a></td>
+                <td><a href="{{ path('admin_edit_sector', { 'id': sector.id}) }}" class="btn btn-warning">Izmeni</a> <a href="{{ path('admin_delete_sector', {'id' : sector.id })}}" class="btn btn-danger">Izbriši</a></td>
             </tr>
             {% set counter = counter + 1 %}
         {% endfor %}
