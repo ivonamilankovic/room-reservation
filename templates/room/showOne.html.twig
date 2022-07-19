@@ -18,6 +18,7 @@
         <div class="card w-75 mx-auto my-5 shadow-sm">
             <div class="card-body m-5 px-5">
                 <h2 class="card-title text-center">{{ room.name }}</h2>
+                <input type="hidden" id="roomID" value="{{ room.id }}">
                 <br>
                 <hr>
                 <div class="card-text">
@@ -34,7 +35,7 @@
                 <hr>
 
                 <div class=" p-3 bg-light">
-                    <h6 class="text-center">Današnji raspored:</h6>
+                    <h6 class="text-center">Raspored sastanaka prema odabranom datumu:</h6>
                     <br>
                     <div id="timelineList" ></div>
                 </div>

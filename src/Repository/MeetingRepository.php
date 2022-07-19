@@ -107,4 +107,19 @@ class MeetingRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+
+    /**
+     * @return Meeting[]
+     */
+    public function findMeetingsByDate($roomID, $date)
+    {
+        return $this->getQueryBuilder()
+            ->andWhere('m.start LIKE \''.$date.' %\'')
+            ->andWhere('m.room = :roomID ')
+            ->setParameter(':roomID', $roomID)
+            ->orderBy('m.start', 'ASC')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
 }

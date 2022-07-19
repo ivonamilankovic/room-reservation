@@ -7,11 +7,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use JsonSerializable;
 
 /**
  * @ORM\Entity(repositoryClass=MeetingRepository::class)
  */
-class Meeting
+class Meeting implements JsonSerializable
 {
     /**
      * @ORM\Id
@@ -162,5 +163,13 @@ class Meeting
         return $this;
     }
 
-
+    public function jsonSerialize(){
+        return array(
+          'room' => $this->getRoom()->getId(),
+          'creator' => $this->getCreator()->getFullName(),
+          'start' => $this->start,
+          'end' => $this->end,
+          'description' => $this->description,
+        );
+    }
 }

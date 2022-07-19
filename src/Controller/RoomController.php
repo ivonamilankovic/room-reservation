@@ -9,10 +9,11 @@ use App\Form\SearchRoomByCityFormType;
 use App\Repository\MeetingRepository;
 use App\Repository\RoomRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\String\UnicodeString;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
 
 class RoomController extends \Symfony\Bundle\FrameworkBundle\Controller\AbstractController
 {
@@ -199,6 +200,24 @@ class RoomController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstract
             'form' => null,
             'error_msg' => null,
         ]);
+    }
+
+    /**
+     * @Route("/get_availability", name="app_room_availability", options={"expose" = true})
+     */
+    public function getRoomAvailability(MeetingRepository $meetingRep, Request $request)
+    {
+        $meetings = $meetingRep->findMeetingsByDate(
+            $request->request->get('id'),
+            $request->request->get('date')
+        );
+        //$serializer = $this->container->get('serializer');
+        //$response = $serializer->serialize($meetings,'json');
+        $json = [];
+        foreach ($meetings as $m){
+            $json[] = $m->jsonSerialize();
+        }
+        return new JsonResponse($json);
     }
 
 }

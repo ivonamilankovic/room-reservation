@@ -1,5 +1,5 @@
 
-import './styles/app.css';
+import '../styles/app.css';
 
 import $ from 'jquery';
 import 'bootstrap/dist/css/bootstrap.css';
