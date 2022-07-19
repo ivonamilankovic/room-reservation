@@ -8,7 +8,7 @@
         {{ form_start(form) }}
             <div class="d-flex mx-auto w-25">
                 {{ form_widget(form) }}
-                <button type="submit" class="btn btn-primary mb-3 ms-1" style="background-color: #F482D4; border: none">Pretraži</button>
+                <button type="submit" class="btn btn-primary mb-3 ms-1 pinkBtn" >Pretraži</button>
             </div>
         {{ form_end(form) }}
     {% endif %}
@@ -24,16 +24,16 @@
                 <h3 class="card-title">{{ room.name }}</h3>
                 <br>
                 <div class="row">
-                    <div class="col-3 fw-bolder">Kapacitet:</div>
+                    <div class="col fw-bolder">Kapacitet:</div>
                     <div class="col">{{ room.seatNumber }} osoba</div>
                 </div>
                 <br>
                 <div class="row">
-                    <div class="col-3 fw-bolder">Locirano u:</div>
+                    <div class="col fw-bolder">Locirano u:</div>
                     <div class="col">{{ room.city }}, {{ room.street }}</div>
                 </div>
                 <br>
-                <a href="{{ path('app_showbyid_room', { 'id': room.id}) }}" class="btn btn-primary" style="background-color: #F482D4; border: none">Rezerviši ovu salu</a>
+                <a href="{{ path('app_showbyid_room', { 'id': room.id}) }}" class="btn btn-primary pinkBtn" >Rezerviši ovu salu</a>
             </div>
         </div>
 

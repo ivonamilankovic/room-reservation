@@ -2,6 +2,11 @@
 
 {% block title %}{{ room.name }} - Rezervisi salu za sastanak{% endblock %}
 
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    {{ encore_entry_script_tags('timeline') }}
+{% endblock %}
 {% block body %}
 
     {%  if error_msg %}
@@ -27,13 +32,20 @@
                     </div>
                 </div>
                 <hr>
-                <br>
+
+                <div class=" p-3 bg-light">
+                    <h6 class="text-center">Današnji raspored:</h6>
+                    <br>
+                    <div id="timelineList" ></div>
+                </div>
+
+                <hr>
 
                 {% if form %}
                     {{ form_start(form) }}
                         {{ form_widget(form) }}
                         <br>
-                        <button type="submit" class="btn btn-primary d-block mx-auto" style="background-color: #F482D4; border: none">Rezerviši</button>
+                        <button type="submit" class="btn btn-primary d-block mx-auto pinkBtn">Rezerviši</button>
                     {{ form_end(form) }}
                 {% else %}
                     <a href="{{ path('app_login') }}" class="d-block text-center">Prijavi se za opciju rezervisanja sale za sastanak</a>

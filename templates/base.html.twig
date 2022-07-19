@@ -4,9 +4,7 @@
         <meta charset="UTF-8">
         <title>{% block title %}Welcome!{% endblock %}</title>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-        {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
+       {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}
         {% endblock %}
@@ -15,18 +13,18 @@
             {{ encore_entry_script_tags('app') }}
         {% endblock %}
     </head>
-    <body style="background-color: #0089DE">
+    <body>
         <nav class="navbar navbar-expand-lg navbar-dark sticky-top {{ app.session.flashBag.peek('success')|length > 0 ? '' : 'mb-4' }}" style="background-image: linear-gradient(to top,#0089DE, #004B7A); ">
             <div class="container-fluid">
                 <a class="navbar-brand" href="{{ path('app_home') }}" style="padding-left: 15px; font-weight: bold; font-size: 22pt;">info<span style="color: #F482D4">sala</span></a>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ path('app_showall_room') }}" style="color: white">Rezerviši salu</a>
+                            <a class="nav-link" href="{{ path('app_showall_room') }}">Rezerviši salu</a>
                         </li>
                         {% if is_granted('ROLE_ADMIN') %}
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" href="{{ path('admin_home') }}" style="color: white">Admin</a>
+                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" href="{{ path('admin_home') }}" >Admin</a>
                                 <ul class="dropdown-menu">
                                     <li><a class="dropdown-item" href="{{ path('admin_showall_users') }}">Korisnici</a></li>
                                     <li><a class="dropdown-item" href="{{ path('admin_showall_meetings') }}">Sastanci</a></li>
@@ -64,7 +62,7 @@
                                 <li><a href="{{ path('app_user_created_meetings') }}" class="dropdown-item">Moji kreirani sastanci</a></li>
                                 <li><a href="{{ path('app_user_meeting_requests') }}" class="dropdown-item">Pozivi za sastanke
                                         {% if message %}
-                                            <span class="badge bg-danger p-1" style="font-size: 8pt !important;">
+                                            <span class="badge bg-danger p-1">
                                             {{ messageNumber }}
                                             </span>
                                         {% endif %}
