@@ -20,6 +20,7 @@
         "build": "encore production --progress"
     },
     "dependencies": {
-        "@popperjs/core": "^2.11.5"
+        "@popperjs/core": "^2.11.5",
+        "@types/google.visualization": "^0.0.68"
     }
 }

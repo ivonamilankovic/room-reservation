@@ -211,12 +211,9 @@ class RoomController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstract
             $request->request->get('id'),
             $request->request->get('date')
         );
-        //$serializer = $this->container->get('serializer');
-        //$response = $serializer->serialize($meetings,'json');
-        $json = [];
-        foreach ($meetings as $m){
-            $json[] = $m->jsonSerialize();
-        }
+        $serializer = $this->container->get('serializer');
+        $json = $serializer->serialize($meetings,'json');
+
         return new JsonResponse($json);
     }
 

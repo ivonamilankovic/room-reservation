@@ -167,9 +167,14 @@ class Meeting implements JsonSerializable
         return array(
           'room' => $this->getRoom()->getId(),
           'creator' => $this->getCreator()->getFullName(),
-          'start' => $this->start,
-          'end' => $this->end,
+          'start' => $this->getTime($this->start),
+          'end' => $this->getTime($this->end),
           'description' => $this->description,
         );
     }
+
+    public function getTime($date){
+        return $date->format('H:i');
+    }
+
 }
