@@ -165,7 +165,7 @@ class Meeting implements JsonSerializable
 
     public function jsonSerialize(){
         return array(
-          'room' => $this->getRoom()->getId(),
+          'room' => $this->getRoom()->getName(),
           'creator' => $this->getCreator()->getFullName(),
           'start' => $this->getTime($this->start),
           'end' => $this->getTime($this->end),

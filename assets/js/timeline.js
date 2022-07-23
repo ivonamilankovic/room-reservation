@@ -26,7 +26,6 @@ startYear.addEventListener('change', ()=>{
 });
 
 function getRoomAvailabilityData(){
-    data = null;
     let day, month, year;
     year = startYear.value;
     if (startDay.value.length === 1) {
@@ -54,17 +53,12 @@ function getRoomAvailabilityData(){
         success: (response) => {
             try {
                 data = JSON.parse(response);
-                console.log(data);
+                drawChart();
             } catch (e) {
                 console.log('Could not parse');
             }
         }
     });
-    if (data) {
-        drawChart();
-    } else {
-        document.getElementById('timelineList').innerText = 'Nema zakazanih sastanaka';
-    }
 }
 
 /*chart for displaying availability of room*/
@@ -73,7 +67,6 @@ google.charts.setOnLoadCallback(drawChart);
 
 function drawChart() {
     var container = document.getElementById('timelineList');
-    container.innerText = null;
     var chart = new google.visualization.Timeline(container);
     var dataTable = new google.visualization.DataTable();
 
@@ -84,9 +77,15 @@ function drawChart() {
 
     var options = {
         timeline: { showRowLabels: false },
-        avoidOverlappingGridLines: true,
-        colors : ['#e8351e']
+        avoidOverlappingGridLines: true
     };
+
+    dataTable.addRow([
+        'Radno vreme',
+        'Radno vreme',
+        new Date(0,0,0,8,0,0),
+        new Date(0,0,0,20,0,0)
+    ]);
 
     data.forEach((val) => {
         let startTime = val.start.split(':');

@@ -4,8 +4,11 @@
 
 {% block body %}
 
-
-    <a href="{{ path('admin_insert_room') }}" class="btn btn-warning mb-3">Dodaj novu sobu</a>
+    {% for r in app.user.roles %}
+        {% if r == "ROLE_ADMIN" %}
+            <a href="{{ path('admin_insert_room') }}" class="btn btn-warning mb-3">Dodaj novu sobu</a>
+        {% endif %}
+    {% endfor %}
 
     <table class="table table-hover bg-light">
         <tr>
@@ -21,10 +24,16 @@
         <tr>
             <td>{{ counter }}</td>
             <td>{{ room.name }}</td>
-            <td>{{ room.seatNumber }}</td>
+            <td>{{ room.seatNumber }} osoba</td>
             <td>{{ room.city }}</td>
             <td>{{ room.street }}</td>
-            <td><a href="{{ path('admin_edit_room', { 'id': room.id}) }}" class="btn btn-warning">Izmeni</a> <a href="{{ path('admin_delete_room', {'id': room.id}) }}" class="btn btn-danger">Izbriši</a></td>
+            <td>
+                {% for r in app.user.roles %}
+                    {% if r == "ROLE_ADMIN" %}
+                        <a href="{{ path('admin_edit_room', { 'id': room.id}) }}" class="btn btn-warning">Izmeni</a> <a href="{{ path('admin_delete_room', {'id': room.id}) }}" class="btn btn-danger">Izbriši</a>
+                    {% endif %}
+                {% endfor %}
+            </td>
         </tr>
         {% set counter = counter + 1 %}
     {% endfor %}

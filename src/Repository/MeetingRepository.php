@@ -111,12 +111,24 @@ class MeetingRepository extends ServiceEntityRepository
     /**
      * @return Meeting[]
      */
-    public function findMeetingsByDate($roomID, $date)
+    public function findMeetingsByDateAndRoom($roomID, $date)
     {
         return $this->getQueryBuilder()
             ->andWhere('m.start LIKE \''.$date.' %\'')
             ->andWhere('m.room = :roomID ')
             ->setParameter(':roomID', $roomID)
+            ->orderBy('m.start', 'ASC')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+    /**
+     * @return Meeting[]
+     */
+    public function findMeetingsByDate($date)
+    {
+        return $this->getQueryBuilder()
+            ->andWhere('m.start LIKE \''.$date.' %\'')
             ->orderBy('m.start', 'ASC')
             ->getQuery()
             ->getResult()

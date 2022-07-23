@@ -18,21 +18,13 @@ use App\Repository\UserInMeetingRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class AdminController extends \Symfony\Bundle\FrameworkBundle\Controller\AbstractController
 {
-
-    /**
-     * @Route("/admin", name="admin_home")
-     */
-    public function adminHome(): Response
-    {
-        return $this->render('admin/home.html.twig');
-    }
-
     /*rooms*/
     /**
      * @Route("admin/rooms/all", name="admin_showall_room")
@@ -50,7 +42,30 @@ class AdminController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstrac
     }
 
     /**
+     * @Route("/admin/rooms/schedule", name="admin_room_schedule")
+     */
+    public function roomSchedule(): Response
+    {
+        return $this->render('admin/room/schedule.html.twig');
+    }
+
+    /**
+     * @Route("/get_schedule", name="app_get_schedule", options={ "expose" = true})
+     */
+    public function getSchedule(MeetingRepository $meetingRep, Request $request)
+    {
+        $meetings = $meetingRep->findMeetingsByDate(
+            $request->request->get('date')
+        );
+        $serializer = $this->container->get('serializer');
+        $json = $serializer->serialize($meetings,'json');
+
+        return new JsonResponse($json);
+    }
+
+    /**
      * @Route("/admin/rooms/insert", name="admin_insert_room")
+     * @IsGranted("ROLE_ADMIN")
      */
     public function insertRoom(EntityManagerInterface $em, Request $request): Response
     {
@@ -79,6 +94,7 @@ class AdminController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstrac
 
     /**
      * @Route("/admin/rooms/edit/{id}", name="admin_edit_room")
+     * @IsGranted("ROLE_ADMIN")
      */
     public function editRoom(EntityManagerInterface $em, Request $request, Room $room): Response
     {
@@ -102,6 +118,7 @@ class AdminController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstrac
 
     /**
      * @Route("/admin/rooms/delete/{id}", name="admin_delete_room")
+     * @IsGranted("ROLE_ADMIN")
      */
     public function deleteRoom(EntityManagerInterface $em, Room $room): Response
     {
@@ -111,7 +128,7 @@ class AdminController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstrac
         return $this->redirectToRoute('admin_showall_room');
     }
 
-    /*rooms*/
+    /*users*/
     /**
      * @Route("/admin/users/all", name="admin_showall_users")
      */
@@ -129,6 +146,7 @@ class AdminController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstrac
 
     /**
      * @Route("/admin/users/edit/{id}", name="admin_edit_user")
+     * @IsGranted("ROLE_ADMIN")
      */
     public function editUser(EntityManagerInterface $em, Request $request, User $user): Response
     {
@@ -152,6 +170,7 @@ class AdminController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstrac
 
     /**
      * @Route("/admin/users/delete/{id}", name="admin_delete_user")
+     * @IsGranted("ROLE_ADMIN")
      */
     public function deleteUser(EntityManagerInterface $em, User $user): Response
     {
@@ -174,6 +193,20 @@ class AdminController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstrac
     }
 
     /**
+     * @Route("/admin/users/make_chief/{id}", name="admin_make_user_chief")
+     * @IsGranted("ROLE_ADMIN")
+     */
+    public function makeUserChief(EntityManagerInterface $em, User $user): Response
+    {
+        //TODO da li treba ako vec postoji drugi chief istog sektora da se on obrise?
+        $user->setRoles(['ROLE_CHIEF']);
+        $em->persist($user);
+        $em->flush();
+
+        return $this->redirectToRoute('admin_showall_users');
+    }
+
+    /**
      * @Route ("/admin/users/make_regular/{id}", name="admin_make_user_regular")
      */
     public function makeUserRegular(EntityManagerInterface $em, User $user): Response
@@ -188,6 +221,7 @@ class AdminController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstrac
     /*sectors*/
     /**
      * @Route("/admin/sector/all", name="admin_showall_sectors")
+     * @IsGranted("ROLE_ADMIN")
      */
     public function showAllSectors(SectorRepository $repository): Response
     {
@@ -203,6 +237,7 @@ class AdminController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstrac
 
     /**
      * @Route("/admin/sector/edit/{id}", name="admin_edit_sector")
+     * @IsGranted("ROLE_ADMIN")
      */
     public function editSector(EntityManagerInterface $em, Request $request, Sector $sector): Response
     {
@@ -225,6 +260,7 @@ class AdminController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstrac
 
     /**
      * @Route("/admin/sector/insert", name="admin_insert_sector")
+     * @IsGranted("ROLE_ADMIN")
      */
     public function insertSector(EntityManagerInterface $em, Request $request): Response
     {
@@ -250,6 +286,7 @@ class AdminController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstrac
 
     /**
      * @Route("/admin/sector/delete/{id}", name="admin_delete_sector")
+     * @IsGranted("ROLE_ADMIN")
      */
     public function deleteSector(EntityManagerInterface $em, Sector $sector): Response
     {

@@ -207,7 +207,7 @@ class RoomController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstract
      */
     public function getRoomAvailability(MeetingRepository $meetingRep, Request $request)
     {
-        $meetings = $meetingRep->findMeetingsByDate(
+        $meetings = $meetingRep->findMeetingsByDateAndRoom(
             $request->request->get('id'),
             $request->request->get('date')
         );

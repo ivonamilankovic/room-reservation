@@ -24,12 +24,22 @@
                         </li>
                         {% if is_granted('ROLE_ADMIN') %}
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" href="{{ path('admin_home') }}" >Admin</a>
+                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" href="" >Admin</a>
                                 <ul class="dropdown-menu">
                                     <li><a class="dropdown-item" href="{{ path('admin_showall_users') }}">Korisnici</a></li>
                                     <li><a class="dropdown-item" href="{{ path('admin_showall_meetings') }}">Sastanci</a></li>
                                     <li><a class="dropdown-item" href="{{ path('admin_showall_room') }}">Sale</a></li>
                                     <li><a class="dropdown-item" href="{{ path('admin_showall_sectors') }}">Sektori</a></li>
+                                </ul>
+                            </li>
+                        {% elseif is_granted('ROLE_CHIEF') %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" href="" >Administacija</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="{{ path('admin_showall_users') }}">Korisnici</a></li>
+                                    <li><a class="dropdown-item" href="{{ path('admin_showall_meetings') }}">Sastanci</a></li>
+                                    <li><a class="dropdown-item" href="{{ path('admin_showall_room') }}">Sale</a></li>
+                                    <li><a class="dropdown-item" href="{{ path('admin_room_schedule') }}">Raspored za sale</a></li>
                                 </ul>
                             </li>
                         {% endif %}

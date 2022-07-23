@@ -16,25 +16,34 @@
             <th></th>
         </tr>
         {% set counter = 1 %}
-        {% for user in users %}
+        {% for u in users %}
             <tr>
                 <td>{{ counter }}</td>
-                <td>{{ user.firstName }}</td>
-                <td>{{ user.lastName }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.sector }}</td>
-                <td>{% for role in user.roles %} {{ role }}, {% endfor %}</td>
+                <td>{{ u.firstName }}</td>
+                <td>{{ u.lastName }}</td>
+                <td>{{ u.email }}</td>
+                <td>{{ u.sector }}</td>
+                <td>{% for role in u.roles %} {{ role }}, {% endfor %}</td>
                 <td>
-                    <a href="{{ path('admin_edit_user', { 'id': user.id}) }}" class="btn btn-warning">Izmeni</a>
-                    <a href="{{ path('admin_delete_user', {'id': user.id}) }}" class="btn btn-danger">Izbriši</a>
+                    {% for r in app.user.roles %}
+                        {% if r == "ROLE_ADMIN" %}
+                            <a href="{{ path('admin_edit_user', { 'id': u.id}) }}" class="btn btn-warning">Izmeni</a>
+                            <a href="{{ path('admin_delete_user', {'id': u.id}) }}" class="btn btn-danger">Izbriši</a>
+                        {% endif %}
+                    {% endfor %}
                     {% set break = false %}
-                    {% for role in user.roles %}
+                    {% for role in u.roles %}
                         {% if not break %}
-                            {% if role == "ROLE_ADMIN" %}
-                                <a href="{{ path('admin_make_user_regular', {'id': user.id}) }}" class="btn btn-success">Make regular user</a>
+                            {% if role == "ROLE_ADMIN" or role == "ROLE_CHIEF" %}
+                                <a href="{{ path('admin_make_user_regular', {'id': u.id}) }}" class="btn btn-success">Make regular user</a>
                                 {% set break = true %}
                             {% else %}
-                                <a href="{{ path('admin_make_user_admin', {'id': user.id}) }}" class="btn btn-success">Make admin</a>
+                                <a href="{{ path('admin_make_user_admin', {'id': u.id}) }}" class="btn btn-success">Make admin</a>
+                                {% for r in app.user.roles %}
+                                    {% if r == "ROLE_ADMIN" %}
+                                        <a href="{{ path('admin_make_user_chief', {'id': u.id}) }}" class="btn btn-success">Make chief of sector</a>
+                                    {% endif %}
+                                {% endfor %}
                             {% endif %}
                         {% endif %}
                     {% endfor %}
