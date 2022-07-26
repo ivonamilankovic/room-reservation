@@ -26,6 +26,10 @@ security:
                 path: /logout
                 target: /home
 
+            login_throttling:
+                max_attempts: 3
+                interval: '15 minutes'
+
             remember_me:
                 secret: '%kernel.secret%'
 

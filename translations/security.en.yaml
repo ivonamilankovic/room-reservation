@@ -1,2 +1,4 @@
 "Invalid credentials." : "Pogrešna lozinka."
 "Username could not be found." : "Email nije pronađen."
+"Too many failed login attempts, please try again in 15 minutes." : "Previše neuspešnih pokušaja prijave, pokušajte ponovo za 15 minuta."
+"Verify your account before logging in." : "Verifikujte nalog pre nego što se prijavite."
