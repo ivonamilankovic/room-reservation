@@ -19,3 +19,4 @@ yarn-error.log
 .idea
 supervisord.pid
 /composer.phar
+/public/uploads
