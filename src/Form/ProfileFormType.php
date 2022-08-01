@@ -2,11 +2,12 @@
 
 namespace App\Form;
 
-use App\Entity\User;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Image;
 
 class ProfileFormType extends \Symfony\Component\Form\AbstractType
 {
@@ -17,7 +18,16 @@ class ProfileFormType extends \Symfony\Component\Form\AbstractType
             ->add('firstName', TextType::class, ['label'=>"Ime"])
             ->add('lastName', TextType::class, ["label"=>"Prezime"])
             ->add('email', EmailType::class, ["label"=>"Email adresa"])
-            //->add('sector', null, ['label'=>'Sektor'])
+            ->add('image', FileType::class,[
+                'label' =>'Profilna slika (opciono)',
+                'mapped' => false,
+                'required' => false,
+                'constraints' =>[
+                    new Image([
+                        'maxSize' => '10M'
+                    ])
+                ]
+            ])
         ;
     }
 

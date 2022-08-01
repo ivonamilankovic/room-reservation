@@ -60,7 +60,12 @@
                                     data-bs-toggle="dropdown"
                                     aria-expanded="false"
                                     style="text-decoration: none">
-                                <img src="{{ app.user.avatar }}" alt="{{ app.user.fullName }} Avatar">
+                                {% if app.user.picture %}
+                                    <img src=" {{ asset(app.user.picturePath) }}
+                                    " alt="{{ app.user.fullName }}" width="45" height="45">
+                                {% else %}
+                                    <img src="{{ app.user.avatar }}" alt="{{ app.user.fullName }} Avatar">
+                                {% endif %}
                                 {% if message %}
                                     <span class="position-absolute top-0 start-100 translate-middle badge
                                     border border-light rounded-circle bg-danger p-2">
