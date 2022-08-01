@@ -16,12 +16,10 @@ class CheckVerifiedUserSubscriber implements EventSubscriberInterface
 {
 
     private RouterInterface $router;
-    private ContainerInterface $container;
 
-    public function __construct(RouterInterface $router, ContainerInterface $container){
+    public function __construct(RouterInterface $router){
 
         $this->router = $router;
-        $this->container = $container;
     }
 
     public function onCheckPassport(CheckPassportEvent $event){
@@ -50,7 +48,7 @@ class CheckVerifiedUserSubscriber implements EventSubscriberInterface
         $user = $event->getPassport()->getUser();
 
         $response = new RedirectResponse(
-            $this->router->generate('app_verify_resend_email',[
+            $this->router->generate('app_new_verify',[
                 'id'=>$user->getId()
             ])
         );

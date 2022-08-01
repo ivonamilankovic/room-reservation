@@ -145,4 +145,16 @@ class SignupController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstra
         ]);
     }
 
+    /**
+     * @Route("/new_verify/{id}", name="app_new_verify")
+     */
+    public function newVerify(UserRepository $userRepository, int $id):Response
+    {
+        $user = $userRepository->findOneBy(['id'=> $id]);
+
+        return $this->render('security/resendVerifyEmail.html.twig',[
+            'user' => $user
+        ]);
+    }
+
 }
