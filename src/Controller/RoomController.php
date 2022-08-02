@@ -120,12 +120,9 @@ class RoomController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstract
                     $room->getId(),
                 );
 
-                //TODO nekako prikazati kada je soba zauzeta?
                 //provera da li je soba zauzeta u dato vreme
                 if($isRoomTaken){
-                    //$this->addFlash('success', 'Soba je zauzeta u odabrano vreme! Sastanak nije sacuvan.');
-                    //zasto ne ispise ako je error ili warning type
-                    return $this->render('room/showOne.html.twig', [
+                       return $this->render('room/showOne.html.twig', [
                         'room' => $room,
                         'form' => $form->createView(),
                         'error_msg' => 'Soba je zauzeta u odabrano vreme! Sastanak nije sacuvan.',
@@ -155,7 +152,6 @@ class RoomController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstract
                 $errorMsg = "Osobe: ";
                 foreach ($userForMeeting as $user){
                     //provera da li je osoba na drugom sastanku u dato vreme
-                    //TODO ako je user zauzet da pita da li ipak zelimo da ga doda
                     $isPersonBusy = $meetingRep->findByIsUserOnAnotherMeeting(
                         $form->get('start')->getData(),
                         $form->get('end')->getData(),

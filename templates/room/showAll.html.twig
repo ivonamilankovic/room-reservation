@@ -6,7 +6,7 @@
 
     {% if form %}
         {{ form_start(form) }}
-            <div class="d-flex mx-auto w-25">
+            <div class="d-flex mx-auto whiteCard25">
                 {{ form_widget(form) }}
                 <button type="submit" class="btn btn-primary mb-3 ms-1 pinkBtn" >Pretraži</button>
             </div>
@@ -18,9 +18,9 @@
 
     {% for room in rooms %}
 
-        <div class="card w-75 mx-auto my-5 shadow">
-            <div class="card-header ps-4">Sala #{{ counter }}</div>
-            <div class="card-body mx-5 px-5 pb-4">
+        <div class="card whiteCard75 shadow">
+            <div class="card-header ps-lg-4 ps-sm-0">Sala #{{ counter }}</div>
+            <div class="card-body pb-4 px-lg-4 mx-lg-4 px-sm-2 mx-sm-0">
                 <h3 class="card-title">{{ room.name }}</h3>
                 <br>
                 <div class="row">

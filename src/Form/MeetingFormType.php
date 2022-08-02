@@ -66,7 +66,7 @@ class MeetingFormType extends \Symfony\Component\Form\AbstractType
                 'class' => User::class,
                 'choices' => $this->userRepository->findUsersForMeeting($options['loggedUser']),
                 'choice_label' => function (User $user){
-                    return $user->getFullName();
+                    return $user->getFullName() . ' - '. $user->getSector()->getName();
                 },
                 'mapped' => false,
                 'data' => $this->userRepository->findUsersOnMeeting(['meeting'=>$options['meeting_id']])
