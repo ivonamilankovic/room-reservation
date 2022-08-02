@@ -77,16 +77,23 @@ class UserRepository extends ServiceEntityRepository
             ;
     }
 
-
-    /*
-    public function findOneBySomeField($value): ?User
+    public function findOneChiefOfSector($sectorID)
     {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $role = 'ROLE_CHIEF';
+        // The ResultSetMapping maps the SQL result to entities
+        $rsm = $this->createResultSetMappingBuilder('u');
+
+        $rawQuery = sprintf(
+            'SELECT %s
+        FROM user u 
+        WHERE JSON_CONTAINS(u.roles, :role, \'$\') AND u.sector_id = :sectorID',
+            $rsm->generateSelectClause()
+        );
+
+        $query = $this->getEntityManager()->createNativeQuery($rawQuery, $rsm);
+        $query->setParameter('role',sprintf('"%s"', $role));
+        $query->setParameter('sectorID', $sectorID);
+        return $query->getResult();
+
     }
-    */
 }

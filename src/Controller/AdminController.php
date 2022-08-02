@@ -196,9 +196,15 @@ class AdminController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstrac
      * @Route("/admin/users/make_chief/{id}", name="admin_make_user_chief")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function makeUserChief(EntityManagerInterface $em, User $user): Response
+    public function makeUserChief(EntityManagerInterface $em, User $user, UserRepository $userRepository): Response
     {
-        //TODO da li treba ako vec postoji drugi chief istog sektora da se on obrise?
+
+        $existingChief = $userRepository->findOneChiefOfSector($user->getSector()->getId());
+        if($existingChief){
+            $existingChief[0]->setRoles(['ROLE_USER']);
+            $em->persist($existingChief[0]);
+        }
+
         $user->setRoles(['ROLE_CHIEF']);
         $em->persist($user);
         $em->flush();
@@ -333,8 +339,6 @@ class AdminController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstrac
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            //TODO provere
-
             $newMeeting = $form->getData();
             $newMeetingUsers = $form->get('users')->getData();
 
@@ -467,8 +471,7 @@ class AdminController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstrac
             $errorMsg = "Osobe: ";
             foreach ($userForMeeting as $user) {
                 //provera da li je osoba na drugom sastanku u dato vreme
-                //TODO ako je user zauzet da pita da li ipak zelimo da ga doda
-                $isPersonBusy = $meetingRep->findByIsUserOnAnotherMeeting(
+               $isPersonBusy = $meetingRep->findByIsUserOnAnotherMeeting(
                     $form->get('start')->getData(),
                     $form->get('end')->getData(),
                     $user->getId(),
