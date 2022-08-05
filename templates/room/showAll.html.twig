@@ -3,41 +3,38 @@
 {% block title %}Sve sale za sastanke{% endblock %}
 
 {% block body %}
-
-    {% if form %}
-        {{ form_start(form) }}
-            <div class="d-flex mx-auto whiteCard25">
-                {{ form_widget(form) }}
-                <button type="submit" class="btn btn-primary mb-3 ms-1 pinkBtn" >Pretraži</button>
-            </div>
-        {{ form_end(form) }}
-    {% endif %}
-
+<div class="container">
+    <div class="row">
+        {% if form %}
+            {{ form_start(form) }}
+                <div class="d-flex mx-auto col-sm-10 col-md-8 col-lg-4 ">
+                    {{ form_widget(form) }}
+                    <button type="submit" class="btn btn-primary mb-3 ms-1 pinkBtn" >Pretraži</button>
+                </div>
+            {{ form_end(form) }}
+        {% endif %}
+    </div>
 
     {% set counter = 1 %}
-
-    {% for room in rooms %}
-
-        <div class="card whiteCard75 shadow">
-            <div class="card-header ps-lg-4 ps-sm-0">Sala #{{ counter }}</div>
-            <div class="card-body pb-4 px-lg-4 mx-lg-4 px-sm-2 mx-sm-0">
-                <h3 class="card-title">{{ room.name }}</h3>
-                <br>
-                <div class="row">
-                    <div class="col fw-bolder">Kapacitet:</div>
-                    <div class="col">{{ room.seatNumber }} osoba</div>
+    <div class="row">
+        {% for room in rooms %}
+        <div class=" col-sm-12 col-md-6 col-lg-4 p-0 mx-sm-2 m-md-0 ">
+            <div class="card whiteCard75 shadow">
+                <div class="card-header ps-lg-2 ps-sm-0">Sala #{{ counter }}</div>
+                <div class="card-body pb-3 px-lg-3 mx-lg-2 px-sm-2 mx-sm-0">
+                    <h3 class="card-title">{{ room.name }}</h3>
+                    <br>
+                    <div><span class="fw-bolder me-2">Kapacitet:</span> {{ room.seatNumber }} osoba</div>
+                    <br>
+                    <div><span class="fw-bolder me-2">Locirano u:</span> {{ room.city }}, {{ room.street }}</div>
+                    <br>
+                    <a href="{{ path('app_showbyid_room', { 'id': room.id}) }}" class="btn btn-primary pinkBtn" >Rezerviši ovu salu</a>
                 </div>
-                <br>
-                <div class="row">
-                    <div class="col fw-bolder">Locirano u:</div>
-                    <div class="col">{{ room.city }}, {{ room.street }}</div>
-                </div>
-                <br>
-                <a href="{{ path('app_showbyid_room', { 'id': room.id}) }}" class="btn btn-primary pinkBtn" >Rezerviši ovu salu</a>
             </div>
         </div>
-
         {% set counter = counter + 1 %}
-    {% endfor %}
+        {% endfor %}
+    </div>
 
+</div>
 {% endblock %}

@@ -18,7 +18,7 @@
             <div class="container-fluid">
                 <a class="navbar-brand" href="{{ path('app_home') }}" style="padding-left: 15px; font-weight: bold; font-size: 22pt;">info<span style="color: #F482D4">sala</span></a>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <ul class="navbar-nav me-auto ">
                         <li class="nav-item">
                             <a class="nav-link" href="{{ path('app_showall_room') }}">Rezerviši salu</a>
                         </li>
@@ -92,7 +92,7 @@
                             </ul>
                         </div>
                     {% else %}
-                        <a href="{{ path('app_login') }}" class="btn btn-sm btn-outline-light me-3" type="button" >Prijavi se</a>
+                        <a href="{{ path('app_login') }}" class="btn btn-sm btn-outline-light me-3" type="button" >Prijava</a>
                         <a href="{{ path('app_signup')}}" class="btn btn-sm btn-outline-light me-3" type="button" >Registracija</a>
                     {% endif %}
                 </div>

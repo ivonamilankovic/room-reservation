@@ -38,13 +38,14 @@ body {
     border-radius: 0.25rem;
     background-color: white;
     padding: 1.5rem;
-    margin: 3rem auto;
 }
 .whiteCard75{
     width: 75%;
+    margin: 1.3rem auto;
 }
 .whiteCard50{
     width: 50%;
+    margin: 3rem auto;
 }
 .whiteCard25{
     width: 25%;
