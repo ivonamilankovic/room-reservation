@@ -60,7 +60,6 @@ class MeetingRepository extends ServiceEntityRepository
       */
     public function findByIsUserOnAnotherMeeting($startTime, $endTime, $userID, $meetingID)
     {
-        //TODO prepraviti kveri ? nesto cudno se desava
          return $this->getQueryBuilder()
             ->leftJoin(UserInMeeting::class,'uim', Join::WITH, 'uim.meeting = m.id')
             ->addSelect('uim')

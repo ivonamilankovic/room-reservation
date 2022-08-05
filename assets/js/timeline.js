@@ -95,7 +95,7 @@ function getUserAvailabilityData(checkBoxLabel){
         },
         success:(r)=>{
             var arr = JSON.parse(r);
-            console.log(arr); //??? nesto nije okej
+            console.log(arr);
             if(arr.length !== 0){
 
                 var tag = document.createElement('span');

@@ -34,7 +34,7 @@
                             </li>
                         {% elseif is_granted('ROLE_CHIEF') %}
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" href="" >Chief</a>
+                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" href="" >Šef-admin</a>
                                 <ul class="dropdown-menu">
                                     <li><a class="dropdown-item" href="{{ path('admin_showall_users') }}">Korisnici</a></li>
                                     <li><a class="dropdown-item" href="{{ path('admin_showall_meetings') }}">Sastanci</a></li>
