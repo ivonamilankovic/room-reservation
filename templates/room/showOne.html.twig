@@ -34,15 +34,13 @@
                 </div>
                 <hr>
 
+                {% if form %}
                 <div class=" p-3 bg-light">
                     <h6 class="text-center">Raspored sastanaka prema odabranom datumu:</h6>
                     <br>
                     <div id="timelineList" ></div>
                 </div>
-
                 <hr>
-
-                {% if form %}
                     {{ form_start(form) }}
                         {{ form_widget(form) }}
                         <br>

@@ -8,6 +8,7 @@ use App\Form\MeetingFormType;
 use App\Form\SearchRoomByCityFormType;
 use App\Repository\MeetingRepository;
 use App\Repository\RoomRepository;
+use App\Service\MeetingChecksHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -71,7 +72,7 @@ class RoomController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstract
     /**
      * @Route("rooms/{id}", name="app_showbyid_room")
      */
-    public function showById(RoomRepository $roomRep, MeetingRepository $meetingRep, int $id, EntityManagerInterface $em, Request $request):Response
+    public function showById(RoomRepository $roomRep, int $id, EntityManagerInterface $em, Request $request, MeetingChecksHelper $meetingChecksHelper):Response
     {
         $room = $roomRep->findOneBy(['id'=> $id]);
 
@@ -92,87 +93,31 @@ class RoomController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstract
                 $meeting = $form->getData();
                 $meeting->setCreator($this->getUser());
                 $meeting->setRoom($room);
-
-                //provera da li je kreator zauzet u dato vreme
-                $isCreatorBusy = $meetingRep->findByIsUserOnAnotherMeeting(
-                    $form->get('start')->getData(),
-                    $form->get('end')->getData(),
-                    $this->getUser()->getId(),
-                    0
-                );
-                if($isCreatorBusy){
-                    return $this->render('room/showOne.html.twig', [
-                        'room' => $room,
-                        'form' => $form->createView(),
-                        'error_msg' => 'Vi ste u to vreme na drugom sastanku. Sastanak nije sacuvan.',
-                    ]);
-                }else {
-                    $creatorInMeeting = new UserInMeeting();
-                    $creatorInMeeting->setUser($this->getUser());
-                    $creatorInMeeting->setMeeting($meeting);
-                    $creatorInMeeting->setIsGoing(true);
-                    $em->persist($creatorInMeeting);
-                }
-
-                $isRoomTaken = $meetingRep->findByIsRoomTakenForAnotherMeeting(
-                    $form->get('start')->getData(),
-                    $form->get('end')->getData(),
-                    $room->getId(),
-                );
-
-                //provera da li je soba zauzeta u dato vreme
-                if($isRoomTaken){
-                       return $this->render('room/showOne.html.twig', [
-                        'room' => $room,
-                        'form' => $form->createView(),
-                        'error_msg' => 'Soba je zauzeta u odabrano vreme! Sastanak nije sacuvan.',
-                    ]);
-                }
-
-                //provera da li ima vise oznacenih osoba nego sto je kapacitet
                 $userForMeeting = $form->get('users')->getData();
-                if(count($userForMeeting)+1 > $room->getSeatNumber()){ //+1 jer se broji i kreator
-                    return $this->render('room/showOne.html.twig', [
+                $message = $meetingChecksHelper->checkAvailability(
+                    $meeting,
+                    $room,
+                    $this->getUser(),
+                    $userForMeeting);
+                if($message){
+                    return $this->render('room/showOne.html.twig',[
                         'room' => $room,
                         'form' => $form->createView(),
-                        'error_msg' => 'Odabrali ste vise osoba nego sto je kapacitet sobe! Sastanak nije sacuvan.',
+                        'error_msg' => $message,
                     ]);
                 }
 
-                //provera da li ima manje oznacenih osoba nego sto je kapacitet
-                if(count($userForMeeting)+1 < $room->getSeatNumber()){
-                    return $this->render('room/showOne.html.twig', [
-                        'room' => $room,
-                        'form' => $form->createView(),
-                        'error_msg' => 'Odabrali ste manje osoba nego sto je kapacitet sobe! Sastanak nije sacuvan.',
-                    ]);
-                }
+                $creatorInMeeting = new UserInMeeting();
+                $creatorInMeeting->setUser($this->getUser());
+                $creatorInMeeting->setMeeting($meeting);
+                $creatorInMeeting->setIsGoing(true);
+                $em->persist($creatorInMeeting);
 
-                //dodavanje svakoga u sastanak sa defaultom isGoing = 0
-                $errorMsg = "Osobe: ";
                 foreach ($userForMeeting as $user){
-                    //provera da li je osoba na drugom sastanku u dato vreme
-                    $isPersonBusy = $meetingRep->findByIsUserOnAnotherMeeting(
-                        $form->get('start')->getData(),
-                        $form->get('end')->getData(),
-                        $user->getId(),
-                        0
-                    );
-                    if($isPersonBusy){
-                        $errorMsg .= $user->getFullName(). ", ";
-                    }else {
-                        $userInMeeting = new UserInMeeting();
-                        $userInMeeting->setUser($user);
-                        $userInMeeting->setMeeting($meeting);
-                        $em->persist($userInMeeting);
-                    }
-                }
-                if($errorMsg !== "Osobe: "){
-                    return $this->render('room/showOne.html.twig', [
-                        'room' => $room,
-                        'form' => $form->createView(),
-                        'error_msg' => $errorMsg.' su u to vreme na drugom sastanku. Sastanak nije sacuvan.',
-                    ]);
+                    $userInMeeting = new UserInMeeting();
+                    $userInMeeting->setUser($user);
+                    $userInMeeting->setMeeting($meeting);
+                    $em->persist($userInMeeting);
                 }
 
                 $em->persist($meeting);

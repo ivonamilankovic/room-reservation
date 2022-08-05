@@ -9,7 +9,7 @@
         <hr>
         {% if meetings %}
             {% for meeting in meetings %}
-                <div class="border-start p-3 meetingRequestDisplay">
+                <div class="p-3 meetingRequestDisplay">
                     <div>
                         <h6>{{ meeting.meeting.creator.fullName }} Vas poziva na sastanak od {{ meeting.meeting.start|date('H:i') }}h do {{ meeting.meeting.end|date('H:i') }}h
                             u prostoriji '{{ meeting.meeting.room.name }}', {{ meeting.meeting.room.street}} - {{ meeting.meeting.room.city }}

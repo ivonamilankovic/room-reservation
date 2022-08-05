@@ -31,6 +31,7 @@ body {
 .meetingRequestDisplay{
     display: flex;
     justify-content: space-between;
+    border-left: 1px solid #dee2e6;
 }
 .whiteCard50, .whiteCard75{
     border: 1px solid #dee2e6;
@@ -52,6 +53,8 @@ body {
 @media screen and (max-width: 800px) {
     .meetingRequestDisplay{
         display: block;
+        border: none;
+        padding: 0 !important;
     }
     .dateDisplay{
         margin-top: 25px;
