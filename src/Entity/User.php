@@ -15,7 +15,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  */
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface, \JsonSerializable
 {
     /**
      * @ORM\Id
@@ -389,4 +389,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getPicturePath(){
         return './uploads/'.UploadHelper::PROFILE_IMAGES.'/'.$this->getPicture();
     }
+
+    public function jsonSerialize()
+    {
+        return array(
+            'name' => $this->getFullName(),
+            'sector' => $this->getSector()->getName()
+        );
+    }
+
 }

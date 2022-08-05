@@ -199,7 +199,7 @@ class RoomController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstract
     }
 
     /**
-     * @Route("/get_availability", name="app_room_availability", options={"expose" = true})
+     * @Route("/room_availability", name="app_room_availability", options={"expose" = true})
      */
     public function getRoomAvailability(MeetingRepository $meetingRep, Request $request)
     {
@@ -209,6 +209,23 @@ class RoomController extends \Symfony\Bundle\FrameworkBundle\Controller\Abstract
         );
         $serializer = $this->container->get('serializer');
         $json = $serializer->serialize($meetings,'json');
+
+        return new JsonResponse($json);
+    }
+
+    /**
+     * @Route("/user_availability", name="app_user_availability", options={"expose" = true})
+     */
+    public function getUserAvailability(MeetingRepository $meetingRepository, Request $request)
+    {
+        $results = $meetingRepository->findByIsUserOnAnotherMeeting(
+            $request->request->get('start'),
+            $request->request->get('end'),
+            $request->request->get('userID'),
+            0
+        );
+        $serializer = $this->container->get('serializer');
+        $json = $serializer->serialize($results,'json');
 
         return new JsonResponse($json);
     }

@@ -3,13 +3,18 @@ import Routing from '../../vendor/friendsofsymfony/jsrouting-bundle/Resources/pu
 const routes = require('./routes.json');
 Routing.setRoutingData(routes);
 
+const checkBoxesUsers = document.getElementsByClassName('form-check');
 const startDay = $('#meeting_form_start_date_day').get(0);
 const startMonth = $('#meeting_form_start_date_month').get(0);
 const startYear = $('#meeting_form_start_date_year').get(0);
+const startHour = $('#meeting_form_start_time_hour').get(0);
+const startMinute = $('#meeting_form_start_time_minute').get(0);
 const endDay = $('#meeting_form_end_date_day').get(0);
 const endMonth = $('#meeting_form_end_date_month').get(0);
 const endYear = $('#meeting_form_end_date_year').get(0);
-let data;
+const endHour = $('#meeting_form_end_time_hour').get(0);
+const endMinute = $('#meeting_form_end_time_minute').get(0);
+let data, startDateTime, endDateTime;
 getRoomAvailabilityData();
 
 startDay.addEventListener('change', ()=>{
@@ -24,20 +29,89 @@ startYear.addEventListener('change', ()=>{
     endYear.value = startYear.value;
     getRoomAvailabilityData();
 });
+startHour.addEventListener('change', ()=>{
+    getRoomAvailabilityData();
+});
+startMinute.addEventListener('change', ()=>{
+    endYear.value = startYear.value;
+    getRoomAvailabilityData();
+});
+endDay.addEventListener('change', ()=>{
+    startDay.value = endDay.value;
+    getRoomAvailabilityData();
+});
+endMonth.addEventListener('change', ()=>{
+    startMonth.value = endMonth.value;
+    getRoomAvailabilityData();
+});
+endYear.addEventListener('change', ()=>{
+    startYear.value = endYear.value;
+    getRoomAvailabilityData();
+});
+endHour.addEventListener('change', ()=>{
+    getRoomAvailabilityData();
+});
+endMinute.addEventListener('change', ()=>{
+    getRoomAvailabilityData();
+});
 
+function getValue(input){
+    if (input.value.length === 1) {
+        return  "0" + input.value;
+    } else {
+        return input.value;
+    }
+}
+function getDates(){
+    let sDay, sMonth, sHour, sMin;
+    sDay = getValue(startDay);
+    sMonth = getValue(startMonth);
+    sHour = getValue(startHour);
+    sMin = getValue(startMinute);
+    startDateTime = startYear.value + '-' + sMonth + '-' + sDay + ' ' + sHour + ':' + sMin + ':00';
+    let eDay, eMonth, eHour, eMin;
+    eDay = getValue(endDay);
+    eMonth = getValue(endMonth);
+    eHour = getValue(endHour);
+    eMin = getValue(endMinute);
+    endDateTime = endYear.value + '-' + eMonth + '-' + eDay + ' ' + eHour + ':' + eMin + ':00';
+}
+function getUserAvailabilityData(checkBoxLabel){
+    Array.from(checkBoxesUsers).forEach((chkBox)=>{
+        while(chkBox.lastElementChild.lastElementChild){
+            chkBox.lastElementChild.removeChild(chkBox.lastElementChild.lastElementChild);
+        }
+    });
+    getDates();
+    let userID = checkBoxLabel.getAttribute('for').substr(19);
+    $.ajax({
+        url: Routing.generate('app_user_availability'),
+        method: 'POST',
+        dataType: 'JSON',
+        data:{
+            'userID': userID,
+            'start' : startDateTime,
+            'end': endDateTime,
+        },
+        success:(r)=>{
+            var arr = JSON.parse(r);
+            console.log(arr); //??? nesto nije okej
+            if(arr.length !== 0){
+
+                var tag = document.createElement('span');
+                var text = document.createTextNode('   *zauzet/a');
+                tag.appendChild(text);
+                tag.style.color = 'red';
+                checkBoxLabel.appendChild(tag);
+            }
+        }
+    });
+}
 function getRoomAvailabilityData(){
     let day, month, year;
     year = startYear.value;
-    if (startDay.value.length === 1) {
-        day = "0" + startDay.value;
-    } else {
-        day = startDay.value;
-    }
-    if (startMonth.value.length === 1) {
-        month = "0" + startMonth.value;
-    } else {
-        month = startMonth.value;
-    }
+    day = getValue(startDay);
+    month = getValue(startMonth);
     let date = year + "-" + month + "-" + day;
     let id = $('#roomID').val();
 
@@ -59,6 +133,7 @@ function getRoomAvailabilityData(){
             }
         }
     });
+    Array.from(checkBoxesUsers).forEach((chkBox)=>getUserAvailabilityData(chkBox.lastElementChild));
 }
 
 /*chart for displaying availability of room*/
